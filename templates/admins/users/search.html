@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load phone_number %}
+{% block content %}
+<div class="content-wrapper">
+    {% if searched %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <button class="btn btn-secondary" onclick="exportToPDF()">PDF yuklash</button>
+                            <button class="btn btn-success" onclick="exportToExcel()">Excel yuklash</button>
+                            <button class="btn btn-primary" onclick="exportToWord()">Word yuklash</button>
+
+                            <table id="example2" class="table table-bordered table-hover mt-3">
+                                <thead>
+                                    <tr>
+                                        <th>Ism, familiya</th>
+                                        <th>Telefon raqam</th>
+                                        <th>Buyruq muddati</th>
+                                        <th>Ro'yxatdan o'tgan</th>
+                                        <th>Biriktirilganligi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for profile in searched %}
+                                    <tr>
+                                        <td>{{ profile.fio }}</td>
+                                        <td>{{ profile.tel_number|phone_number }}</td>
+                                        <td>{{ profile.command_expire|date:"d.m.Y" }}</td>
+                                        <td>{{ profile.created|date:"d.m.Y" }}</td>
+                                        <td>
+                                            {% if profile.is_selected %}
+                                            Ha
+                                            {% else %}
+                                            Yo'q
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    {% else %}
+    <h3 class="text-center"><span style="color: red;">{{ input_data }}</span> bo'yicha qanday foydalanuvchi
+        topilmadi</h3>
+    {% endif %}
+</div>
+
+<!-- PDF uchun kutubxona -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
+
+<!-- Excel uchun kutubxona -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+<!-- Word uchun kutubxona -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.27.0/docxtemplater.min.js"></script>
+
+<script>
+    function exportToPDF() {
+        const docDefinition = {
+            pageOrientation: 'landscape',
+            pageSize: 'A4',
+            content: [
+                { text: "JBAT foydalanuvchilari ro'yxati", style: 'header', fontSize: 16, bold: true, margin: [0, 0, 0, 10] },
+                {
+                    table: {
+                        headerRows: 1,
+                        widths: ['20%', '20%', '20%', '20%', '20%'],
+                        body: [
+                            [
+                                { text: 'Ism, familiya', bold: true, fillColor: '#f3f3f3', margin: [0, 5] },
+                                { text: 'Telefon raqam', bold: true, fillColor: '#f3f3f3', margin: [0, 5] },
+                                { text: 'Buyruq muddati', bold: true, fillColor: '#f3f3f3', margin: [0, 5] },
+                                { text: 'Ro\'yxatdan o\'tgan', bold: true, fillColor: '#f3f3f3', margin: [0, 5] },
+                                { text: 'Biriktirilganligi', bold: true, fillColor: '#f3f3f3', margin: [0, 5] }
+                            ],
+                            ...Array.from(document.querySelectorAll("#example2 tbody tr")).map(row =>
+                                Array.from(row.children).map(cell => ({
+                                    text: cell.innerText, margin: [0, 5]
+                                }))
+                            )
+                        ]
+                    }
+                }
+            ],
+            defaultStyle: {
+                fontSize: 10
+            }
+        };
+        pdfMake.createPdf(docDefinition).download("jbat-foydalanuvchilari-ro'yxati.pdf");
+    }
+
+    function exportToExcel() {
+        let table = document.getElementById("example2");
+        let wb = XLSX.utils.table_to_book(table, { sheet: "Sheet JS" });
+
+        const ws = wb.Sheets["Sheet JS"];
+        const range = XLSX.utils.decode_range(ws["!ref"]);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            let max_width = 15;
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+                if (cell && cell.v) max_width = Math.max(max_width, cell.v.toString().length);
+            }
+            const width = max_width < 15 ? 15 : max_width + 2;
+            ws["!cols"] = ws["!cols"] || [];
+            ws["!cols"][C] = { wch: width };
+        }
+
+        XLSX.writeFile(wb, "jbat-foydalanuvchilari-ro'yxati.xlsx");
+    }
+
+    function exportToWord() {
+        const table = document.getElementById("example2");
+        const rows = Array.from(table.rows);
+        const htmlTable = rows.map(row =>
+            `<tr>${Array.from(row.cells).map(cell => `<td style="border: 1px solid #000; padding: 8px; min-width: 80px; max-width: 200px; text-align: left; white-space: nowrap;">${cell.innerText}</td>`).join("")}</tr>`
+        ).join("");
+
+        const content = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><style>
+            table, td, th { border: 1px solid black; border-collapse: collapse; }
+            td { padding: 8px; min-width: 80px; max-width: 200px; text-align: left; white-space: nowrap; }
+        </style></head>
+        <body><table>${htmlTable}</table></body></html>
+        `;
+
+        const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+        saveAs(blob, "jbat-foydalanuvchilari-ro'yxati.doc");
+    }
+</script>
+
+{% endblock content %}
