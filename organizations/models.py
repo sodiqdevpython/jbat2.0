@@ -198,6 +198,8 @@ class RoomsEquipment(BaseModel):
 
     author = models.ForeignKey('organizations.UserProfile', on_delete=models.SET_NULL, null=True, blank=True)
 
+    organization_for = models.ForeignKey(Organizations, on_delete=models.SET_NULL, null=True)
+
     command_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['pdf', 'docx'], message="Faqat pdf yoki docx formatda fayl yulay olasiz")])
 
     def __str__(self):

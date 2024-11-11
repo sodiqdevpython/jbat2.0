@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .permissions import OnlySuperUser
 from organizations.models import UserProfile
 from django.db.models import Q
+from organizations.models import EquipmentName, Organizations
+from .forms import CreateEquipmentNameForm
 
 class Dashboard(View):
     def get(self, request):
@@ -36,3 +38,37 @@ class SearchUsers(View, OnlySuperUser):
 class PageIsNotReady(View):
     def get(self, request):
         return render(request, 'admins/page-not-ready.html')
+
+class EquipmentList(View):
+    def get(self, request):
+        form = CreateEquipmentNameForm()
+        rooms_equipments = EquipmentName.objects.only('name')
+        context = {
+            'data': rooms_equipments,
+            'count_number': rooms_equipments.count(),
+            'form': form
+        }
+        return render(request, 'admins/org/equipments-list.html', context)
+    
+    def post(self, request):
+        form = CreateEquipmentNameForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+        return redirect('admin_equipment_list')
+        
+
+class MaterialTechnicBase(View, OnlySuperUser):
+    def get(self, request):
+        orgs = Organizations.objects.only('id','name')
+        context = {
+            'orgs': orgs
+        }
+        return render(request, 'admins/org/material-technic-base.html', context)
+    
+class OrganizationList(View, OnlySuperUser):
+    def get(self, request):
+        orgs = Organizations.objects.all()
+        context = {
+            'orgs': orgs
+        }
+        return render(request, 'admins/org/org-list.html', context)
