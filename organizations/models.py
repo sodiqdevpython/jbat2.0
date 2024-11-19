@@ -156,7 +156,7 @@ class AmountSelect(BaseModel):
 #! Sinf xonadagi o'quvchilar sig'imi va ajratilgan jihozlar soni ketma ketligi
 
 class EquipmentName(BaseModel):
-    name = models.CharField(max_length=1024, validators=[MinLengthValidator(3, "Jihoz nomi juda qisqa, xato kiritgan bo'lishingiz mumkin !")])
+    name = models.CharField(max_length=1024, validators=[MinLengthValidator(3, "Jihoz nomi juda qisqa, xato kiritgan bo'lishingiz mumkin !")], unique=True)
 
     def __str__(self):
         return self.name

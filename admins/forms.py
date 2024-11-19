@@ -1,5 +1,6 @@
 from django import forms
-from organizations.models import EquipmentName
+from django.contrib.auth.models import User
+from organizations.models import EquipmentName, Organizations, UserProfile
 
 class CreateEquipmentNameForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load phone_number %}
+{% block content %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>JBAT tizimidagi barcha muassasalar ro'yxati</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Muassasalar</a></li>
+                        <li class="breadcrumb-item active">Muassasalar ro'yxati</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-md-11">
+                                    <button class="btn btn-primary" onclick="exportToWord()"><i
+                                            class="fas fa-download"></i> Word</button>
+                                    <button class="btn btn-success" onclick="exportToExcel()"><i
+                                            class="fas fa-download"></i> Excel</button>
+                                </div>
+                                <div class="col-12 col-md-1">
+                                    <a href="#" class="btn btn-primary">
+                                        Qo'shish
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-6 col-md-4">
+                                    <label for="vil">Viloyat</label>
+                                    <select id="vil" class="form-control">
+                                        <option value="defaultRegion">Barchasi</option>
+                                        {% for region in regions_list %}
+                                        <option value="{{ region.id }}">{{ region.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <label for="tur">Turi</label>
+                                    <select id="tur" class="form-control">
+                                        <option selected value="default">Barchasi</option>
+                                        <option value="Maktabgacha ta'lim">Maktabgacha ta'lim</option>
+                                        <option value="Umumiy o'rta ta'lim maktab">Umumiy o'rta ta'lim maktab</option>
+                                        <option value="Musiqa maktab">Musiqa maktab</option>
+                                        <option value="Sport maktab">Sport maktab</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <label for="inkluziv">Inkluzivligi</label>
+                                    <select id="inkluziv" class="form-control">
+                                        <option value="defaultInclusive">Tanlanmagan</option>
+                                        <option value="ha">Ha</option>
+                                        <option value="yoq">Yo'q</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <table id="example2" class="table table-bordered table-hover mt-5 table-sm"
+                                style="table-layout: fixed;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 4%;" class="text-center">#</th>
+                                        <th class="text-center">Muassasa nomi</th>
+                                        <th class="text-center">Muassasa turi</th>
+                                        <th class="text-center">Muassasa sig'imi</th>
+                                        <th class="text-center">Inklyuzivligi</th>
+                                        <th class="text-center">Joylashuvi</th>
+                                        <th class="text-center">Ma'sul shaxs</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="organization-table-body">
+                                    {% for org in orgs %}
+                                    <tr>
+                                        <td class="text-center">{{ forloop.counter }}</td>
+                                        <td class="text-center">{{ org.name }}</td>
+                                        <td class="text-center">{{ org.education_type }}</td>
+                                        <td class="text-center">{{ org.students_amount }} o'quvchi</td>
+                                        <td class="text-center">{{ org.is_inclusive|yesno:"Ha,Yo'q" }}</td>
+                                        <td class="text-center">{{ org.region }}</td>
+                                        <td class="text-center">{{ org.admin }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <p class="mt-3">Jami <span id="total-count">{{ count_number_orgs }}</span> ta</p>
+                        </div>
+
+                        <!-- /.card-body -->
+                    </div>
+
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+
+    <!-- /.content -->
+</div>
+
+<!-- PDFMake kutubxonasini kiritish -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
+
+
+<!-- Excel uchun kutubxona -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+<!-- Word uchun kutubxona -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.27.0/docxtemplater.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        function filterOrganizations() {
+            const region_id = $("#vil").val();
+            const organization_type = $("#tur").val();
+            const is_inclusive = $("#inkluziv").val();
+
+            $.ajax({
+                url: "{% url 'organization_list' %}",  // URL views.py da yaratilgan yo‘l nomiga mos bo‘lishi kerak
+                data: {
+                    "region_id": region_id,
+                    "organization_type": organization_type,
+                    "is_inclusive": is_inclusive,
+                },
+                success: function (response) {
+                    let rows = "";
+                    response.organizations.forEach(function (org, index) {
+                        rows += `
+                            <tr>
+                                <td class="text-center">${index + 1}</td>
+                                <td class="text-center">${org.name}</td>
+                                <td class="text-center">${org.education_type}</td>
+                                <td class="text-center">${org.students_amount} o'quvchi</td>
+                                <td class="text-center">${org.is_inclusive}</td>
+                                <td class="text-center">${org.region}</td>
+                                <td class="text-center">${org.admin}</td>
+                            </tr>
+                        `;
+                    });
+                    $("#organization-table-body").html(rows);
+                    $("#total-count").text(response.organizations.length);
+                },
+            });
+        }
+
+        // Filtr o'zgartirilganda filterOrganizations funksiyasini chaqirish
+        $("#vil, #tur, #inkluziv").change(filterOrganizations);
+    });
+</script>
+'
+
+<script>
+    function exportToExcel() {
+        let table = document.getElementById("example2");
+        let wb = XLSX.utils.table_to_book(table, { sheet: "Sheet JS" });
+
+        const ws = wb.Sheets["Sheet JS"];
+        const range = XLSX.utils.decode_range(ws["!ref"]);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            let max_width = 15;
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+                if (cell && cell.v) max_width = Math.max(max_width, cell.v.toString().length);
+            }
+            const width = max_width < 15 ? 15 : max_width + 2;
+            ws["!cols"] = ws["!cols"] || [];
+            ws["!cols"][C] = { wch: width };
+        }
+
+        XLSX.writeFile(wb, "JBAT tizimidagi barcha muassasalar ro'yxati.xlsx");
+    }
+
+    function exportToWord() {
+        const table = document.getElementById("example2");
+        const rows = Array.from(table.rows);
+        const htmlTable = rows.map(row =>
+            `<tr>${Array.from(row.cells).map(cell => `
+            <td style="border: 1px solid #000; padding: 8px; min-width: 80px; max-width: 150px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-wrap: break-word;">
+                ${cell.innerText}
+            </td>`).join("")}</tr>`
+        ).join("");
+
+        const content = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset='utf-8'><style>
+        table, td, th { border: 1px solid black; border-collapse: collapse; }
+        td { padding: 8px; min-width: 80px; max-width: 150px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; }
+        th { text-align: center; font-weight: bold; }
+        table { width: 100%; table-layout: fixed; word-wrap: break-word; }
+        body { margin: 0; padding: 0; }
+    </style></head>
+    <body><table>${htmlTable}</table></body>
+    </html>
+    `;
+
+        const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+        saveAs(blob, "JBAT tizimidagi barcha muassasalar ro'yxati.doc");
+    }
+
+</script>
+
+{% endblock content %}
