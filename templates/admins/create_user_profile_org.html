@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Foydalanuvchi, Profil va Tashkilot Yaratish</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+                        <li class="breadcrumb-item active">Yaratish</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Foydalanuvchi, Profil va Tashkilot Ma'lumotlari</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Profil ma'lumotlari -->
+                        <h5 class="mb-3">Profil ma'lumotlari</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.first_name.label_tag }}
+                                {{ user_profile_form.first_name }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.last_name.label_tag }}
+                                {{ user_profile_form.last_name }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.born_in.label_tag }}
+                                {{ user_profile_form.born_in }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.father_name.label_tag }}
+                                {{ user_profile_form.father_name }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.passport_id.label_tag }}
+                                {{ user_profile_form.passport_id }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.pinfl.label_tag }}
+                                {{ user_profile_form.pinfl }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.position.label_tag }}
+                                {{ user_profile_form.position }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.tel_number.label_tag }}
+                                {{ user_profile_form.tel_number }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.manzil.label_tag }}
+                                {{ user_profile_form.manzil }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.command_expire.label_tag }}
+                                {{ user_profile_form.command_expire }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.command_pdf.label_tag }}
+                                {{ user_profile_form.command_pdf }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <!-- Bo'sh maydon uchun -->
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Parol -->
+                        <h5 class="mb-3">Foydalanuvchi Paroli</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ user_profile_form.password.label_tag }}
+                                {{ user_profile_form.password }}
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <!-- Bo'sh maydon uchun -->
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Tashkilot ma'lumotlari -->
+                        <h5 class="mb-3">Tashkilot Ma'lumotlari</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.organization_number.label_tag }}
+                                {{ organization_form.organization_number }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.name.label_tag }}
+                                {{ organization_form.name }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.education_type.label_tag }}
+                                {{ organization_form.education_type }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.power.label_tag }}
+                                {{ organization_form.power }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.is_inclusive.label_tag }}
+                                {{ organization_form.is_inclusive }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.rating.label_tag }}
+                                {{ organization_form.rating }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.students_amount.label_tag }}
+                                {{ organization_form.students_amount }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.ball.label_tag }}
+                                {{ organization_form.ball }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.latitude.label_tag }}
+                                {{ organization_form.latitude }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.longitude.label_tag }}
+                                {{ organization_form.longitude }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.region.label_tag }}
+                                {{ organization_form.region }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ organization_form.location_type.label_tag }}
+                                {{ organization_form.location_type }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3" id="city-field" style="display: none;">
+                                {{ organization_form.city.label_tag }}
+                                {{ organization_form.city }}
+                            </div>
+                            <div class="col-md-4 mb-3" id="district-field" style="display: none;">
+                                {{ organization_form.district.label_tag }}
+                                {{ organization_form.district }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <!-- Bo'sh maydon uchun -->
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-success mr-2">Saqlash</button>
+                                <a href="#" class="btn btn-secondary">Bekor qilish</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationTypeSelect = document.getElementById('id_location_type');
+        const cityField = document.getElementById('city-field');
+        const districtField = document.getElementById('district-field');
+
+        function toggleLocationFields() {
+            const selectedType = locationTypeSelect.value;
+            if (selectedType === 'city') {
+                cityField.style.display = 'block';
+                districtField.style.display = 'none';
+            } else if (selectedType === 'district') {
+                cityField.style.display = 'none';
+                districtField.style.display = 'block';
+            } else {
+                cityField.style.display = 'none';
+                districtField.style.display = 'none';
+            }
+        }
+
+        // Initial call
+        toggleLocationFields();
+
+        // Event listener
+        locationTypeSelect.addEventListener('change', toggleLocationFields);
+    });
+</script>
+{% endblock %}

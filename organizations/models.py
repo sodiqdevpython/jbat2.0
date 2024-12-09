@@ -233,8 +233,8 @@ class Professions(BaseModel):
 
 class UserProfile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='user_profile')
-    first_name = models.CharField(max_length=32, default="No Name")
-    last_name = models.CharField(max_length=32, default="No Last Name")
+    first_name = models.CharField(max_length=32)
+    last_name = models.CharField(max_length=32)
     born_in = models.DateField()
     father_name = models.CharField(max_length=32)
     passport_id = models.CharField(max_length=9, unique=True)

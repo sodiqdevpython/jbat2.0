@@ -37,7 +37,7 @@
                                             class="fas fa-download"></i> Excel</button>
                                 </div>
                                 <div class="col-12 col-md-1">
-                                    <a href="#" class="btn btn-primary">
+                                    <a href="{% url 'create_org' %}" class="btn btn-primary">
                                         Qo'shish
                                     </a>
                                 </div>
@@ -88,7 +88,7 @@
                                     {% for org in orgs %}
                                     <tr>
                                         <td class="text-center">{{ forloop.counter }}</td>
-                                        <td class="text-center">{{ org.name }}</td>
+                                        <td class="text-center"><a href="{% url 'org_detail' org.id %}">{{ org.name }}</a></td>
                                         <td class="text-center">{{ org.education_type }}</td>
                                         <td class="text-center">{{ org.students_amount }} o'quvchi</td>
                                         <td class="text-center">{{ org.is_inclusive|yesno:"Ha,Yo'q" }}</td>

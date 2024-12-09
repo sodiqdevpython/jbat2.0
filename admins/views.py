@@ -3,13 +3,27 @@ from django.views import View
 from .permissions import OnlySuperUser
 from organizations.models import UserProfile, Organizations
 from django.db.models import Q
-from organizations.models import EquipmentName, Organizations, Regions
+from organizations.models import EquipmentName, Organizations, Regions, RoomsEquipment
 from .forms import CreateEquipmentNameForm
 from django.http import JsonResponse
 
 class Dashboard(View):
     def get(self, request):
-        return render(request, 'admins/dashboard.html')
+        # Statistikalarni olish
+        organization_count = Organizations.objects.count()
+        user_count = UserProfile.objects.count()
+        equipment_count = RoomsEquipment.objects.count()
+        inclusive_organization_count = Organizations.objects.filter(is_inclusive=True).count()
+        non_inclusive_organization_count = organization_count - inclusive_organization_count  # Inclusive bo'lmagan muassasalar
+
+        context = {
+            'organization_count': organization_count,
+            'user_count': user_count,
+            'equipment_count': equipment_count,
+            'inclusive_organization_count': inclusive_organization_count,
+            'non_inclusive_organization_count': non_inclusive_organization_count,
+        }
+        return render(request, 'admins/dashboard.html', context)
 
 class Users(View, OnlySuperUser):
     def get(self, request):

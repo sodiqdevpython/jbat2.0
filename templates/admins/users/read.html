@@ -57,7 +57,10 @@
                                 <tbody>
                                     {% for profile in profiles %}
                                     <tr>
-                                        <td><a style="color: black;" href="google.com">{{ profile.fio }}</a>
+                                        <td><a style="color: black;"
+                                                href="{% url 'user_detail' profile.id %}">
+                                                {{ profile.fio }}
+                                            </a>
                                         </td>
                                         <td>
                                             <p>{{ profile.passport_id }}</p>

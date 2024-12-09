@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Muassasa Profili</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+            <li class="breadcrumb-item active">Muassasa Profil</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-4">
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+              <h3 class="profile-username">{{ organization.name }}</h3>
+              <p class="text-muted">Turi: {{ organization.education_type }}</p>
+              <p class="text-muted">Talabalar soni: {{ organization.students_amount }}</p>
+              <p class="text-muted">Hudud: {{ organization.region.name }}</p>
+              <p class="text-muted">
+                Manzil: 
+                {% if organization.district %}
+                  {{ organization.district.name }}
+                {% elif organization.city %}
+                  {{ organization.city.name }}
+                {% else %}
+                  <span class="text-muted">Manzil ko'rsatilmagan</span>
+                {% endif %}
+              </p>
+              <p class="text-muted">Ball: {{ organization.ball }}</p>
+              <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                  <b>Inkluzivligi:</b> <span class="float-right">{{ organization.is_inclusive|yesno:"Ha,Yo'q" }}</span>
+                </li>
+                <li class="list-group-item">
+                  <b>Reyting:</b> <span class="float-right">{{ organization.rating }}</span>
+                </li>
+                <li class="list-group-item">
+                  <b>Quvvat:</b> <span class="float-right">{{ organization.power }}</span>
+                </li>
+              </ul>
+              {% if admin_profile %}
+              <h5>Admin haqida</h5>
+              <ul class="list-group">
+                <li class="list-group-item"><b>Ismi:</b> {{ admin_profile.fio }}</li>
+                <li class="list-group-item"><b>Telefon:</b> {{ admin_profile.tel_number }}</li>
+                <li class="list-group-item"><b>Manzil:</b> {{ admin_profile.manzil }}</li>
+              </ul>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header p-2">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#classes" data-toggle="tab">Sinflar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#equipments" data-toggle="tab">Jihozlar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#statistics" data-toggle="tab">Statistika</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="tab-content">
+                <!-- Classes Tab -->
+                <div class="active tab-pane" id="classes">
+                  <h4 class="mb-3">Umumiy Sinflar</h4>
+                  {% if base_classes %}
+                  <ul class="list-group">
+                    {% for base_class in base_classes %}
+                    <li class="list-group-item">
+                      <b>{{ base_class.name.name }}</b>
+                      <small class="text-muted">({{ base_class.subtitle.name }})</small>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  {% else %}
+                  <p class="text-muted">Sinflar mavjud emas.</p>
+                  {% endif %}
+                </div>
+
+                <!-- Equipments Tab -->
+                <div class="tab-pane" id="equipments">
+                  <h4 class="mb-3">Jihozlar</h4>
+                  {% if equipments %}
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Jihoz nomi</th>
+                        <th>Miqdor</th>
+                        <th>Turi</th>
+                        <th>Kiritilgan sana</th>
+                        <th>Rasm</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for equipment in equipments %}
+                      <tr>
+                        <td>{{ equipment.name.name }}</td>
+                        <td>{{ equipment.amount.first }}</td>
+                        <td>{{ equipment.equipment_type }}</td>
+                        <td>{{ equipment.entered_date }}</td>
+                        <td>
+                          {% if equipment.image1 %}
+                          <img src="{{ equipment.image1.url }}" alt="Jihoz rasmi" class="img-fluid" style="width: 50px;">
+                          {% else %}
+                          <span class="text-muted">Rasm mavjud emas</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <p class="text-muted">Jihozlar mavjud emas.</p>
+                  {% endif %}
+                </div>
+
+                <!-- Statistics Tab -->
+                <div class="tab-pane" id="statistics">
+                  <h4 class="mb-3">Statistika</h4>
+                  <ul class="list-group">
+                    <li class="list-group-item"><b>Ball:</b> {{ organization.ball }}</li>
+                    <li class="list-group-item"><b>Talabalar soni:</b> {{ organization.students_amount }}</li>
+                    <li class="list-group-item"><b>Inkluziv:</b> {{ organization.is_inclusive|yesno:"Ha,Yo'q" }}</li>
+                    <li class="list-group-item"><b>Jihozlar soni:</b> {{ equipments.count }}</li>
+                    <li class="list-group-item"><b>Sinflar soni:</b> {{ base_classes.count }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load phone_number %}
+
+{% block content %}
+<div class="content-wrapper">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Foydalanuvchi Profil</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+            <li class="breadcrumb-item active">Profil</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-4">
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile text-center">
+              <img class="profile-user-img img-fluid img-circle" src="{% static 'images/user_profile.jpg' %}" alt="User profile picture">
+              <h3 class="profile-username">{{ user_profile.fio }}</h3>
+              <p class="text-muted">{{ user_profile.position.name }}</p>
+              <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                  <span>Telefon: <a>{{ user_profile.tel_number|phone_number }}</a></span>
+                </li>
+                <li class="list-group-item">
+                  <span>Manzil: <a>{{ user_profile.manzil }}</a></span>
+                </li>
+                <li class="list-group-item">
+                  <span>PINFL: <a>{{ user_profile.pinfl }}</a></span>
+                </li>
+              </ul>
+              <a href="#" class="btn btn-primary btn-block"><b>Aktiv</b></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header p-2">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#organization" data-toggle="tab">Tashkilot</a></li>
+                <li class="nav-item"><a class="nav-link" href="#classes" data-toggle="tab">Sinflar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#equipments" data-toggle="tab">Jihozlar</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="tab-content">
+                <!-- Organization Tab -->
+                <div class="active tab-pane" id="organization">
+                  <h4 class="text-center">Tashkilot</h4>
+                  {% if organization %}
+                  <ul class="list-group">
+                    <li class="list-group-item"><b>Nom:</b> {{ organization.name }}</li>
+                    <li class="list-group-item"><b>Turi:</b> {{ organization.education_type }}</li>
+                    <li class="list-group-item"><b>Viloyat:</b> {{ organization.region.name }}</li>
+                    <li class="list-group-item"><b>Talabalar soni:</b> {{ organization.students_amount }}</li>
+                  </ul>
+                  {% else %}
+                  <p class="text-muted text-center">Tashkilot topilmadi.</p>
+                  {% endif %}
+                </div>
+
+                <!-- Classes Tab -->
+                <div class="tab-pane" id="classes">
+                  <h4 class="text-center">Umumiy Sinflar</h4>
+                  {% if base_classes %}
+                  <ul class="list-group">
+                    {% for base_class in base_classes %}
+                    <li class="list-group-item">
+                      <b>{{ base_class.name.name }}</b>
+                      <small class="text-muted">({{ base_class.subtitle.name }})</small>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  {% else %}
+                  <p class="text-muted text-center">Sinflar topilmadi.</p>
+                  {% endif %}
+                </div>
+
+                <!-- Equipments Tab -->
+                <div class="tab-pane" id="equipments">
+                  <h4 class="text-center">Jihozlar</h4>
+                  {% if equipments %}
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Jihoz nomi</th>
+                        <th>Miqdor</th>
+                        <th>Turi</th>
+                        <th>Kiritilgan sana</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for equipment in equipments %}
+                      <tr>
+                        <td>{{ equipment.name.name }}</td>
+                        <td>{{ equipment.amount.first }}</td>
+                        <td>{{ equipment.equipment_type }}</td>
+                        <td>{{ equipment.entered_date }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <p class="text-muted text-center">Jihozlar topilmadi.</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

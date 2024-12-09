@@ -1,74 +1,110 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <div class="content-wrapper">
-    <section class="content mt-5">
-        <div class="container-fluid">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>151</h3>
+	<section class="content">
+		<div class="container-fluid">
+			<!-- Statistikalar -->
+			<div class="row">
+				<div class="col-lg-3 col-6">
+					<div class="small-box bg-info">
+						<div class="inner">
+							<h3>{{ organization_count }}</h3>
+							<p>Jami Muassasalar</p>
+						</div>
+						<div class="icon">
+							<i class="ion ion-university"></i>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-6">
+					<div class="small-box bg-success">
+						<div class="inner">
+							<h3>{{ user_count }}</h3>
+							<p>Jami Foydalanuvchilar</p>
+						</div>
+						<div class="icon">
+							<i class="ion ion-person"></i>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-6">
+					<div class="small-box bg-warning">
+						<div class="inner">
+							<h3>{{ equipment_count }}</h3>
+							<p>Jihozlar</p>
+						</div>
+						<div class="icon">
+							<i class="ion ion-wrench"></i>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-6">
+					<div class="small-box bg-danger">
+						<div class="inner">
+							<h3>{{ inclusive_organization_count }}</h3>
+							<p>Inkluziv Muassasalar</p>
+						</div>
+						<div class="icon">
+							<i class="ion ion-checkmark"></i>
+						</div>
+					</div>
+				</div>
+			</div>
 
-                            <p>New Orders</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-                            <p>Bounce Rate</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3>44</h3>
-
-                            <p>User Registrations</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h3>65</h3>
-
-                            <p>Unique Visitors</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-            </div>
-        </div><!-- /.container-fluid -->
-    </section>
+			<!-- Diagramlar -->
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Foydalanuvchilar statistikasi</h3>
+						</div>
+						<div class="card-body">
+							<canvas id="userChart" style="height: 250px"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Muassasalar Turlari</h3>
+						</div>
+						<div class="card-body">
+							<canvas id="organizationChart" style="height: 250px"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </div>
 
-{% endblock content %}
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+<script>
+	// Foydalanuvchilar Statistikasi
+	const userCtx = document.getElementById('userChart').getContext('2d');
+	new Chart(userCtx, {
+	    type: 'bar',
+	    data: {
+	        labels: ['Foydalanuvchilar', 'Jihozlar', 'Muassasalar'],
+	        datasets: [{
+	            label: 'Statistika',
+	            data: [{{ user_count }}, {{ equipment_count }}, {{ organization_count }}],
+	            backgroundColor: ['#17a2b8', '#ffc107', '#28a745']
+	        }]
+	    }
+	});
+
+	// Muassasalar Turlari
+	const orgCtx = document.getElementById('organizationChart').getContext('2d');
+	new Chart(orgCtx, {
+	    type: 'pie',
+	    data: {
+	        labels: ['Inkluziv', 'Inkluziv emas'],
+	        datasets: [{
+	            label: 'Muassasalar Turlari',
+	            data: [{{ inclusive_organization_count }}, {{ non_inclusive_organization_count }}],
+	            backgroundColor: ['#dc3545', '#6c757d']
+	        }]
+	    }
+	});
+</script>
+{% endblock %}
