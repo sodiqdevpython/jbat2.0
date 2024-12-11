@@ -9,12 +9,11 @@ from django.http import JsonResponse
 
 class Dashboard(View):
     def get(self, request):
-        # Statistikalarni olish
         organization_count = Organizations.objects.count()
         user_count = UserProfile.objects.count()
         equipment_count = RoomsEquipment.objects.count()
         inclusive_organization_count = Organizations.objects.filter(is_inclusive=True).count()
-        non_inclusive_organization_count = organization_count - inclusive_organization_count  # Inclusive bo'lmagan muassasalar
+        non_inclusive_organization_count = organization_count - inclusive_organization_count
 
         context = {
             'organization_count': organization_count,
@@ -83,11 +82,9 @@ class MaterialTechnicBase(View, OnlySuperUser):
 
 class OrganizationList(View, OnlySuperUser):
     def get(self, request):
-        # AJAX so'rovi tekshiruvi
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return self.filter_organizations(request)
 
-        # Oddiy GET so'rov uchun
         orgs = Organizations.objects.all()
         context = {
             'orgs': orgs,
@@ -97,28 +94,22 @@ class OrganizationList(View, OnlySuperUser):
         return render(request, 'admins/org/org-list.html', context)
 
     def filter_organizations(self, request):
-        # Filtr parametrlari AJAX orqali yuboriladi
         region_id = request.GET.get("region_id")
         organization_type = request.GET.get("organization_type")
         is_inclusive = request.GET.get("is_inclusive")
 
-        # Dastlab barcha tashkilotlarni tanlab olamiz
         organizations = Organizations.objects.all()
 
-        # Viloyat bo‘yicha filtr
         if region_id and region_id != "defaultRegion":
             organizations = organizations.filter(region_id=region_id)
 
-        # Tashkilot turi bo‘yicha filtr
         if organization_type and organization_type != "default":
             organizations = organizations.filter(education_type=organization_type)
 
-        # Inklyuzivligi bo‘yicha filtr
         if is_inclusive and is_inclusive != "defaultInclusive":
-            is_inclusive = is_inclusive == "ha"  # Ha yoki Yo'q
+            is_inclusive = is_inclusive == "ha"
             organizations = organizations.filter(is_inclusive=is_inclusive)
 
-        # JSON formatda qaytariladigan ma'lumotlar ro‘yxati
         data = [
             {
                 "name": org.name,

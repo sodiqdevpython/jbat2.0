@@ -28,7 +28,7 @@
             <div class="card-body box-profile">
               <h3 class="profile-username">{{ organization.name }}</h3>
               <p class="text-muted">Turi: {{ organization.education_type }}</p>
-              <p class="text-muted">Talabalar soni: {{ organization.students_amount }}</p>
+              <p class="text-muted">O'quvchilar soni: {{ organization.students_amount }}</p>
               <p class="text-muted">Hudud: {{ organization.region.name }}</p>
               <p class="text-muted">
                 Manzil: 
@@ -135,7 +135,7 @@
                   <h4 class="mb-3">Statistika</h4>
                   <ul class="list-group">
                     <li class="list-group-item"><b>Ball:</b> {{ organization.ball }}</li>
-                    <li class="list-group-item"><b>Talabalar soni:</b> {{ organization.students_amount }}</li>
+                    <li class="list-group-item"><b>O'quvchilar soni:</b> {{ organization.students_amount }}</li>
                     <li class="list-group-item"><b>Inkluziv:</b> {{ organization.is_inclusive|yesno:"Ha,Yo'q" }}</li>
                     <li class="list-group-item"><b>Jihozlar soni:</b> {{ equipments.count }}</li>
                     <li class="list-group-item"><b>Sinflar soni:</b> {{ base_classes.count }}</li>

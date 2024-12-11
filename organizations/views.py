@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .forms import LoginForm, ContactForm, UserProfileForm, OrganizationForm
+from .forms import LoginForm, ContactForm, UserProfileForm, OrganizationForm, MessageForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import FAQ, UserProfile, Organizations, BaseClasses, RoomsEquipment
+from .models import FAQ, UserProfile, Organizations, BaseClasses, RoomsEquipment, Message
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 
 class LoginView(View):
@@ -101,12 +102,10 @@ class CreateUserProfileOrganization(View):
         organization_form = OrganizationForm(request.POST)
 
         if user_profile_form.is_valid() and organization_form.is_valid():
-            # UserProfile yaratish
             user_profile = user_profile_form.save(commit=False)
             password = user_profile_form.cleaned_data['password']
             passport_id = user_profile_form.cleaned_data['passport_id']
 
-            # User yaratish
             user = User.objects.create_user(
                 username=passport_id,
                 password=password
@@ -114,12 +113,10 @@ class CreateUserProfileOrganization(View):
             user_profile.user = user
             user_profile.save()
 
-            # Organization yaratish
             organization = organization_form.save(commit=False)
             organization.admin = user_profile
             organization.save()
 
-            # user_profile ni is_selected=True qilish
             user_profile.is_selected = True
             user_profile.save()
 
@@ -130,3 +127,49 @@ class CreateUserProfileOrganization(View):
             'organization_form': organization_form,
         }
         return render(request, 'admins/create_user_profile_org.html', context)
+
+class InboxView(LoginRequiredMixin, View):
+    def get(self, request):
+        messages_list = Message.objects.filter(recipient=request.user).order_by('-timestamp')
+        paginator = Paginator(messages_list, 10)
+        page_number = request.GET.get('page')
+        messages = paginator.get_page(page_number)
+        context = {
+            'messages': messages
+        }
+        return render(request, 'messages/inbox.html', context)
+
+class SentView(LoginRequiredMixin, View):
+    def get(self, request):
+        messages = Message.objects.filter(sender=request.user).order_by('-timestamp')
+        context = {
+            'messages': messages
+        }
+        return render(request, 'messages/sent.html', context)
+
+class MessageDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        message = get_object_or_404(Message, pk=pk)
+        if message.recipient != request.user and message.sender != request.user:
+            return redirect('inbox')
+        if message.recipient == request.user and not message.is_read:
+            message.is_read = True
+            message.save()
+        context = {
+            'message': message
+        }
+        return render(request, 'messages/message_detail.html', context)
+
+class ComposeMessageView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = MessageForm(current_user=request.user)
+        return render(request, 'messages/compose.html', {'form': form})
+    
+    def post(self, request):
+        form = MessageForm(request.POST, current_user=request.user)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.save()
+            return redirect('sent')
+        return render(request, 'messages/compose.html', {'form': form})

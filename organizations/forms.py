@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contact, UserProfile, Organizations, Regions, Cities, Districts
+from .models import Contact, UserProfile, Organizations, Regions, Cities, Districts, Message
 from django.contrib.auth.models import User
 
 class LoginForm(forms.Form):
@@ -135,3 +135,41 @@ class OrganizationForm(forms.ModelForm):
             self.add_error('district', "Tuman tanlang")
 
         return cleaned_data
+
+
+class MessageForm(forms.ModelForm):
+    recipient = forms.ModelChoiceField(
+        queryset=User.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Qabul qiluvchi",
+        required=True
+    )
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Mavzu'}),
+        label="Mavzu",
+        required=True
+    )
+    body = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Xabaringizni yozing...'}),
+        label="Xabar",
+        required=True
+    )
+    
+    class Meta:
+        model = Message
+        fields = ['recipient', 'subject', 'body']
+    
+    def __init__(self, *args, **kwargs):
+        current_user = kwargs.pop('current_user', None)
+        super(MessageForm, self).__init__(*args, **kwargs)
+        if current_user:
+            if current_user.is_superuser:
+                self.fields['recipient'].queryset = User.objects.all().exclude(id=current_user.id)
+            else:
+                admin_users = User.objects.filter(is_superuser=True)
+                self.fields['recipient'].queryset = admin_users
+                if admin_users.count() == 1:
+                    self.initial['recipient'] = admin_users.first()
+                    self.fields['recipient'].widget = forms.HiddenInput()
+            
+            self.fields['recipient'].label_from_instance = lambda obj: obj.user_profile.fio

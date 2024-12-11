@@ -1,0 +1,44 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Xabar Detali</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'inbox' %}">Kirim</a></li>
+                        <li class="breadcrumb-item active">Xabar Detali</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">{{ message.subject }}</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Kimdan:</strong> {{ message.sender.user_profile }} ({{ message.sender.username }})</p>
+                    <p><strong>Kimga:</strong> {{ message.recipient.fio }} ({{ message.recipient.username }})</p>
+                    <p><strong>Sana:</strong> {{ message.timestamp|date:"Y-m-d H:i" }}</p>
+                    <hr>
+                    <p>{{ message.body|linebreaks }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'compose' %}" class="btn btn-primary"><i class="fas fa-reply"></i> Javob berish</a>
+                    <a href="{% url 'inbox' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Orqaga</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

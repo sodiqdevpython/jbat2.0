@@ -1,0 +1,77 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Yuborilganlar</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active">Yuborilganlar</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Yuborilgan Xabarlar</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'compose' %}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Yangi Xabar</a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="mailbox-controls">
+                    </div>
+                    <div class="table-responsive mailbox-messages">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Kimga</th>
+                                    <th>Mavzu</th>
+                                    <th>Sana</th>
+									<th>Holati</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for message in messages %}
+                                <tr>
+									{% if message.recipient.user_profile %}
+                                    	<td>{{ message.recipient.user_profile }}</td>
+									{% else %}
+										<td style="color:red;">Admin</td>
+									{% endif %}
+                                    <td>
+                                        <a href="{% url 'message-detail' message.pk %}">
+                                            {{ message.subject }}
+                                        </a>
+                                    </td>
+                                    <td>{{ message.timestamp|date:"Y-m-d H:i" }}</td>
+									{% if message.is_read %}
+									<td><i style="color:#007bff;" class="fas fa-check"></i><i style="color:#007bff;" class="fas fa-check"></i></td>
+									{% else %}
+									<td><i style="color:#007bff;" class="fas fa-check"></i></td>
+									{% endif %}
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">Yuborilgan xabarlar mavjud emas.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
