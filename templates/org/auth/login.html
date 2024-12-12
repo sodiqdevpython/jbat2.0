@@ -81,9 +81,10 @@
   <div class="full-width-container">
     <div class="left-section">
       <img src="{% static 'assets/img/illustration-1.webp' %}" alt="Logo">
-      <h5>O‘zbekiston Respublikasi Prezidenti Administratsiyasi huzuridagi Axborot va ommaviy kommunikatsiyalar
-        agentligi</h5>
-      <p>Media-rejalar bilan ishlash va monitoring qilish axborot tizimi</p>
+      <h6>O‘zbekiston Respublikasi Prezidenti Administratsiyasi huzuridagi
+        Ta’limni rivojlantirish
+        respublika ilmiy-metodik
+        markazi</h6>
     </div>
     <div class="right-section">
       <div class="login-form">
@@ -91,12 +92,12 @@
         <form method="post">{% csrf_token %}
           <div class="form-group">
             <label for="login">ID raqam</label>
-            <input type="text" maxlength="9" name="username" class="form-control" id="login" placeholder="Login">
+            <input type="text" maxlength="9" name="username" class="form-control" id="login">
           </div>
           <div class="form-group">
             <label for="password">Parol</label>
             <input autocomplete="" type="password" name="password" maxlength="32" class="form-control" id="password"
-              placeholder="Parol">
+              >
           </div>
           {% if error_message %}
           <p style="color: red;">{{ error_message }}</p>
