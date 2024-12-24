@@ -139,7 +139,7 @@ class OrganizationForm(forms.ModelForm):
 
 class MessageForm(forms.ModelForm):
     recipient = forms.ModelChoiceField(
-        queryset=User.objects.none(),
+        queryset=User.objects.all(),  # "Hamma" foydalanuvchilar ko'rinsin
         widget=forms.Select(attrs={'class': 'form-control'}),
         label="Qabul qiluvchi",
         required=True
@@ -160,16 +160,18 @@ class MessageForm(forms.ModelForm):
         fields = ['recipient', 'subject', 'body']
     
     def __init__(self, *args, **kwargs):
+        """ current_user argumenti bo'lmasa ham xato chiqmasin. 
+            Yoki xohlasangiz, superuser va oddiy userlar ro'yxatini farqlay olasiz.
+        """
         current_user = kwargs.pop('current_user', None)
-        super(MessageForm, self).__init__(*args, **kwargs)
-        if current_user:
-            if current_user.is_superuser:
-                self.fields['recipient'].queryset = User.objects.all().exclude(id=current_user.id)
-            else:
-                admin_users = User.objects.filter(is_superuser=True)
-                self.fields['recipient'].queryset = admin_users
-                if admin_users.count() == 1:
-                    self.initial['recipient'] = admin_users.first()
-                    self.fields['recipient'].widget = forms.HiddenInput()
-            
-            self.fields['recipient'].label_from_instance = lambda obj: obj.user_profile.fio
+        super().__init__(*args, **kwargs)
+
+        # Agar ro'yxatni cheklash yoki current_user ni bekor qilmoqchi bo'lsangiz, shunday qoldirishingiz mumkin.
+        # If you want simpler logic = show "hamma", then do nothing else.
+
+        # Agar har safar username o‘rniga user_profile.fio ko‘rsatmoqchi bo‘lsangiz, xato chiqmasligi uchun shunday yozish mumkin:
+        self.fields['recipient'].label_from_instance = lambda user_obj: (
+            getattr(user_obj, 'user_profile', None) 
+            and getattr(user_obj.user_profile, 'fio', user_obj.username) 
+            or user_obj.username
+        )

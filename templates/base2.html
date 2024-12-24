@@ -142,13 +142,16 @@
                         </li>
 
 						<li class="nav-item">
-                            <a href="{% url 'admin_dashboard' %}" class="nav-link">
-                                <i class="nav-icon fas fa-school"></i>
-                                <p>
+                            {% if organization %}
+                                <a href="{% url 'organization_detail' organization.id %}" class="nav-link">
                                     Muassasa haqida
-                                </p>
-                            </a>
+                                </a>
+                            {% else %}
+                                <span class="nav-link text-muted">Muassasa belgilanmagan</span>
+                            {% endif %}
                         </li>
+                        
+                        
 
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -160,13 +163,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{% url 'inbox' %}" class="nav-link">
+                                    <a href="{% url 'inbox2' %}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Kelgan xabarlar</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'sent' %}" class="nav-link">
+                                    <a href="{% url 'sent2' %}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Xabar yuborish</p>
                                     </a>

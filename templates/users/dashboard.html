@@ -4,17 +4,41 @@
 {% block content %}
 <div class="content-wrapper">
     <!-- Sahifa sarlavhasi -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Oddiy Foydalanuvchi Dashboard</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Asosiy kontent -->
     <section class="content">
         <div class="container-fluid">
+
+            {% if no_organization %}
+            <!-- Agar tashkilot topilmasa -->
+            <div class="card card-warning">
+                <div class="card-body text-center">
+                    <h5 class="text-muted">Sizga biriktirilgan tashkilot topilmadi.</h5>
+                </div>
+            </div>
+            {% else %}
+
             <!-- Statistikalar qismi -->
             <div class="row">
                 <!-- Tashkilot nomi -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>Tashkilot nomi</h3>
+                            <h5>{{ org_name }}</h5>
                             <p>Umumiy ma'lumot</p>
                         </div>
                         <div class="icon">
@@ -27,7 +51,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h3>Yaxshi</h3>
+                            <h5>{{ org_rating }}</h5>
                             <p>Reyting</p>
                         </div>
                         <div class="icon">
@@ -36,11 +60,11 @@
                     </div>
                 </div>
 
-                <!-- Talabalar soni -->
+                <!-- Sig'imi -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
-                            <h3>1200</h3>
+                            <h5>{{ org_student_count }}</h5>
                             <p>Sig'imi</p>
                         </div>
                         <div class="icon">
@@ -53,7 +77,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>85</h3>
+                            <h5>{{ org_ball }}</h5>
                             <p>Ball</p>
                         </div>
                         <div class="icon">
@@ -68,7 +92,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-primary">
                         <div class="inner">
-                            <h3>Ha</h3>
+                            <h5>{{ org_inclusive }}</h5>
                             <p>Inclusive</p>
                         </div>
                         <div class="icon">
@@ -81,7 +105,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-secondary">
                         <div class="inner">
-                            <h3>450</h3>
+                            <h5>{{ org_power }}</h5>
                             <p>Quvvat</p>
                         </div>
                         <div class="icon">
@@ -94,7 +118,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-teal">
                         <div class="inner">
-                            <h3>Toshkent</h3>
+                            <h5>{{ org_region }}</h5>
                             <p>Viloyat</p>
                         </div>
                         <div class="icon">
@@ -107,11 +131,38 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-indigo">
                         <div class="inner">
-                            <h3>Chilonzor</h3>
-                            <p>Tuman/Shahar</p>
+                            <h5>{{ org_city_district }}</h5>
+                            <p>Shahar/Tuman</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-city"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qo'shimcha statistika -->
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h5>{{ total_equipments }}</h5>
+                            <p>Umumiy Jihozlar Soni</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-light">
+                        <div class="inner">
+                            <h5>{{ most_equipped_room }}</h5>
+                            <p>Eng Ko'p Jihozlangan Xona</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-chalkboard"></i>
                         </div>
                     </div>
                 </div>
@@ -121,42 +172,18 @@
             <div class="row">
                 <!-- Chart yoki Grafiglar -->
                 <div class="col-lg-6">
-					<div class="card">
-						<div class="card-header">
-							<h3 class="card-title">Jihozlar Statistikasi</h3>
-						</div>
-						<div class="card-body">
-							<canvas id="equipmentChart" style="height:250px; min-height:250px"></canvas>
-						</div>
-					</div>
-				</div>
-
-                <!-- Oxirgi ma'lumotlar/So'nggi yangiliklar -->
-                <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">So'nggi Ma'lumotlar</h3>
+                            <h5 class="card-title">Jihozlar Statistikasi (So'nggi 3 oy)</h5>
                         </div>
                         <div class="card-body">
-                            <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Yangi jihoz keltirildi
-                                    <span class="badge badge-info badge-pill">2 kun oldin</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Jihozlar soni yangilandi
-                                    <span class="badge badge-success badge-pill">5 kun oldin</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Reyting yangilandi
-                                    <span class="badge badge-warning badge-pill">1 hafta oldin</span>
-                                </li>
-                            </ul>
+                            <canvas id="equipmentChart" style="height:250px; min-height:250px"></canvas>
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
+            {% endif %}
         </div>
     </section>
 </div>
@@ -164,67 +191,63 @@
 <!-- Chart.js kutubxona -->
 <script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Oylik nomlar
-        const monthNames = [
-            'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 
-            'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
-        ];
-    
-        // Bugungi oy
-        const today = new Date();
-        const currentMonth = today.getMonth();
-    
-        // Oxirgi 3 oy
-        const last3Months = [];
-        for (let i = 2; i >= 0; i--) { // Oxiridan boshlash
-            const monthIndex = (currentMonth - i + 12) % 12; // 12 oyning sikli
-            last3Months.push(monthNames[monthIndex]);
-        }
-    
-        // Tasodifiy ma'lumotlar (Backenddan real ma'lumotlarni yuklash mumkin)
-        const equipmentData = [5, 10, 15]; // Misol ma'lumotlar
-    
-        // Grafikni yaratish
-        const ctx = document.getElementById('equipmentChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: last3Months, // Oxirgi 3 oy nomlari
-                datasets: [{
-                    label: 'Jihozlar soni',
-                    data: equipmentData, // Ma'lumotlar
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
+document.addEventListener('DOMContentLoaded', function() {
+    {% if not no_organization %}
+    const monthNames = [
+        'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 
+        'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+    ];
+
+    const today = new Date();
+    const currentMonth = today.getMonth();
+
+    const last3Months = [];
+    for (let i = 2; i >= 0; i--) {
+        const monthIndex = (currentMonth - i + 12) % 12;
+        last3Months.push(monthNames[monthIndex]);
+    }
+
+    const equipmentData = {{ equipment_data|safe }};
+
+    const ctx = document.getElementById('equipmentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: last3Months,
+            datasets: [{
+                label: 'Jihozlar soni',
+                data: equipmentData,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
+            scales: {
+                x: {
+                    title: {
                         display: true,
-                        position: 'top'
+                        text: 'Oxirgi 3 oy'
                     }
                 },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Oxirgi 3 oy'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Jihozlar soni'
-                        }
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jihozlar soni'
                     }
                 }
             }
-        });
+        }
     });
+    {% endif %}
+});
 </script>
-
 {% endblock %}
