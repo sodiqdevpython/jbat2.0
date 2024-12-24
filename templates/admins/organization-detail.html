@@ -95,7 +95,7 @@
 
                 <!-- Equipments Tab -->
                 <div class="tab-pane" id="equipments">
-                  <h4 class="mb-3">Jihozlar</h4>
+                  <h4 class="text-center">Jihozlar</h4>
                   {% if equipments %}
                   <table class="table table-bordered table-hover">
                     <thead>
@@ -104,29 +104,21 @@
                         <th>Miqdor</th>
                         <th>Turi</th>
                         <th>Kiritilgan sana</th>
-                        <th>Rasm</th>
                       </tr>
                     </thead>
                     <tbody>
                       {% for equipment in equipments %}
                       <tr>
-                        <td>{{ equipment.name.name }}</td>
+                        <td><a href="{% url 'equipment_detail' equipment.pk %}">{{ equipment.name.name }}</a></td>
                         <td>{{ equipment.amount.first }}</td>
                         <td>{{ equipment.equipment_type }}</td>
                         <td>{{ equipment.entered_date }}</td>
-                        <td>
-                          {% if equipment.image1 %}
-                          <img src="{{ equipment.image1.url }}" alt="Jihoz rasmi" class="img-fluid" style="width: 50px;">
-                          {% else %}
-                          <span class="text-muted">Rasm mavjud emas</span>
-                          {% endif %}
-                        </td>
                       </tr>
                       {% endfor %}
                     </tbody>
                   </table>
                   {% else %}
-                  <p class="text-muted">Jihozlar mavjud emas.</p>
+                  <p class="text-muted text-center">Jihozlar topilmadi.</p>
                   {% endif %}
                 </div>
 
