@@ -6,6 +6,7 @@ from datetime import date
 from organizations.models import Organizations, RoomsEquipment, BaseClasses, Message
 from django.core.paginator import Paginator
 from organizations.forms import MessageForm
+from .forms import RoomsEquipmentForm, BaseClassesForm
 
 class UserDashboardView(LoginRequiredMixin, View):
     template_name = 'users/dashboard.html'
@@ -192,3 +193,98 @@ class ComposeMessageView(LoginRequiredMixin, View):
             message.save()
             return redirect('sent2')
         return render(request, 'users/compose.html', {'form': form})
+
+
+class EquipmentCreateWithRoomView(LoginRequiredMixin, View):
+    template_name = "users/create_equipment_with_room.html"
+
+    def get(self, request):
+        user_profile = getattr(request.user, 'user_profile', None)
+        equip_form = RoomsEquipmentForm(current_user_profile=user_profile)
+        room_form = BaseClassesForm()
+        context = {
+            'equip_form': equip_form,
+            'room_form': room_form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user_profile = getattr(request.user, 'user_profile', None)
+
+        equip_form = RoomsEquipmentForm(
+            request.POST, request.FILES,
+            current_user_profile=user_profile
+        )
+        room_form = BaseClassesForm(request.POST)
+
+        # Agar “create_new_room” checkbox belgilangan bo‘lsa:
+        create_room = (request.POST.get('create_new_room') == 'on')
+
+        new_room = None
+        if create_room:
+            if room_form.is_valid():
+                new_room = room_form.save(commit=False)
+                # new_room ga organization va author ni set qilamiz
+                from organizations.models import Organizations
+                org = Organizations.objects.filter(admin=user_profile).first()
+                if org:
+                    new_room.organization = org
+                # Agar BaseClasses modelida author bo‘lsa, shunday o‘rnatish mumkin:
+                new_room.author = user_profile
+                new_room.save()
+            else:
+                # room_form xato bo‘lsa, equip_form ni ham qayta ko‘rsatamiz
+                return render(request, self.template_name, {
+                    'equip_form': equip_form,
+                    'room_form': room_form,
+                })
+
+        # Endi jihoz form validatsiyasi
+        if equip_form.is_valid():
+            equipment = equip_form.save(commit=False)
+            equipment.author = user_profile
+            from organizations.models import Organizations
+            org = Organizations.objects.filter(admin=user_profile).first()
+            equipment.organization_for = org
+
+            if new_room:
+                equipment.room = new_room
+
+            equipment.save()
+            return redirect('equipment_list')  # kerakli sahifa
+        else:
+            return render(request, self.template_name, {
+                'equip_form': equip_form,
+                'room_form': room_form
+            })
+
+
+class EquipmentUpdateView(LoginRequiredMixin, View):
+    template_name = 'users/update_equipment.html'
+
+    def get(self, request, pk):
+        user_profile = request.user.user_profile if hasattr(request.user, 'user_profile') else None
+        equipment = get_object_or_404(RoomsEquipment, id=pk)
+
+        # Tekshiramiz: ushbu jihoz shu userga tegishli orgga oidmi? Aks holda 403 ...
+        if equipment.organization_for and equipment.organization_for.admin != user_profile:
+            return redirect('equipment_list')  # yoki xato sahifaga
+
+        form = RoomsEquipmentForm(instance=equipment, current_user_profile=user_profile)
+        return render(request, self.template_name, {'form': form, 'equipment': equipment})
+
+    def post(self, request, pk):
+        user_profile = request.user.user_profile if hasattr(request.user, 'user_profile') else None
+        equipment = get_object_or_404(RoomsEquipment, id=pk)
+
+        if equipment.organization_for and equipment.organization_for.admin != user_profile:
+            return redirect('equipment_list')  # yoki xato sahifaga
+
+        form = RoomsEquipmentForm(request.POST, request.FILES, instance=equipment, current_user_profile=user_profile)
+        if form.is_valid():
+            equipment = form.save(commit=False)
+            # author oldingiday qoladi yoki update bo'lmaydi
+            # organization_for ham oldingiday qoladi
+            equipment.save()
+            return redirect('equipment_list')
+        return render(request, self.template_name, {'form': form, 'equipment': equipment})

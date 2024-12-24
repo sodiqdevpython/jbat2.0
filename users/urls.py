@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserDashboardView, add, read, OrganizationDetailView, InboxView, SentView, ComposeMessageView, MessageDetailView
+from .views import UserDashboardView, add, read, OrganizationDetailView, InboxView, SentView, ComposeMessageView, MessageDetailView, EquipmentCreateWithRoomView, EquipmentUpdateView
 
 urlpatterns = [
     path('dashboard-user/', UserDashboardView.as_view(), name='user_dashboard'),
@@ -9,5 +9,7 @@ urlpatterns = [
     path('messages/compose/default/', ComposeMessageView.as_view(), name='compose2'),
     path('messages/<int:pk>/default/', MessageDetailView.as_view(), name='message-detail2'),
 	path('read/', read, name='read'),
-	path('add/', add, name='add')
+	path('add/', add, name='add'),
+	path('equipments/create/', EquipmentCreateWithRoomView.as_view(), name='equipment_create'),
+    path('equipments/<uuid:pk>/update/', EquipmentUpdateView.as_view(), name='equipment_update'),
 ]

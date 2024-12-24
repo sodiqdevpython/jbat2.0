@@ -1,0 +1,165 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Jihoz Qo‘shish</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">Yangi Jihoz Kiritish</h3>
+          </div>
+          <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              
+              <!-- name, measure_type, amount qator -->
+              <div class="row">
+                <div class="col-md-4">
+                  <label>{{ form.name.label }}</label>
+                  {{ form.name }}
+                  {% if form.name.errors %}
+                    <div class="text-danger">{{ form.name.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.measure_type.label }}</label>
+                  {{ form.measure_type }}
+                  {% if form.measure_type.errors %}
+                    <div class="text-danger">{{ form.measure_type.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.amount.label }}</label>
+                  {{ form.amount }}
+                  {% if form.amount.errors %}
+                    <div class="text-danger">{{ form.amount.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <hr>
+              <!-- avilable_type, accepted_date, invert_number qator -->
+              <div class="row">
+                <div class="col-md-4">
+                  <label>{{ form.avilable_type.label }}</label>
+                  {{ form.avilable_type }}
+                  {% if form.avilable_type.errors %}
+                    <div class="text-danger">{{ form.avilable_type.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.accepted_date.label }}</label>
+                  {{ form.accepted_date }}
+                  {% if form.accepted_date.errors %}
+                    <div class="text-danger">{{ form.accepted_date.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.invert_number.label }}</label>
+                  {{ form.invert_number }}
+                  {% if form.invert_number.errors %}
+                    <div class="text-danger">{{ form.invert_number.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <hr>
+              <!-- entered_date, when_first_time_used, when_made qator -->
+              <div class="row">
+                <div class="col-md-4">
+                  <label>{{ form.entered_date.label }}</label>
+                  {{ form.entered_date }}
+                  {% if form.entered_date.errors %}
+                    <div class="text-danger">{{ form.entered_date.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.when_first_time_used.label }}</label>
+                  {{ form.when_first_time_used }}
+                  {% if form.when_first_time_used.errors %}
+                    <div class="text-danger">{{ form.when_first_time_used.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.when_made.label }}</label>
+                  {{ form.when_made }}
+                  {% if form.when_made.errors %}
+                    <div class="text-danger">{{ form.when_made.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <hr>
+              <!-- image1, image2, image3 qator -->
+              <div class="row">
+                <div class="col-md-4">
+                  <label>{{ form.image1.label }}</label>
+                  {{ form.image1 }}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.image2.label }}</label>
+                  {{ form.image2 }}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.image3.label }}</label>
+                  {{ form.image3 }}
+                </div>
+              </div>
+
+              <hr>
+              <!-- penny_by_year, equipment_type, room qator -->
+              <div class="row">
+                <div class="col-md-4">
+                  <label>{{ form.penny_by_year.label }}</label>
+                  {{ form.penny_by_year }}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.equipment_type.label }}</label>
+                  {{ form.equipment_type }}
+                </div>
+                <div class="col-md-4">
+                  <label>{{ form.room.label }}</label>
+                  {{ form.room }}
+                </div>
+              </div>
+
+              <hr>
+              <!-- xarakteri, command_file -->
+              <div class="row">
+                <div class="col-md-6">
+                  <label>{{ form.xarakteri.label }}</label>
+                  {{ form.xarakteri }}
+                </div>
+                <div class="col-md-6">
+                  <label>{{ form.command_file.label }}</label>
+                  {{ form.command_file }}
+                </div>
+              </div>
+
+              <hr>
+              <div class="form-group text-right mt-3">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Saqlash
+                </button>
+                <a href="#" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Bekor qilish
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+</div>
+{% endblock %}

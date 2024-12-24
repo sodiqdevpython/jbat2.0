@@ -1,0 +1,147 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Jihoz qo‘shish</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- (1) "Yangi xona qo‘shish" belgilansa, form chiqadi -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">Yangi xona qo‘shish (ixtiyoriy)</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group form-check">
+              <input type="checkbox" name="create_new_room" value="on" class="form-check-input" id="createRoomCheck">
+              <label for="createRoomCheck" class="form-check-label">Yangi xona qo‘shish</label>
+            </div>
+
+            <!-- Yangi xona formasi avvalcha yashirin bo‘ladi -->
+            <div id="newRoomForm" style="display: none; margin-top: 10px;">
+              <div class="row">
+                <div class="col-md-6">
+                  <label>{{ room_form.name.label }}</label>
+                  {{ room_form.name }}
+                  {% if room_form.name.errors %}
+                    <div class="text-danger">{{ room_form.name.errors }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-6">
+                  <label>{{ room_form.subtitle.label }}</label>
+                  {{ room_form.subtitle }}
+                  {% if room_form.subtitle.errors %}
+                    <div class="text-danger">{{ room_form.subtitle.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- (2) Jihoz qo‘shish formasi (RoomsEquipmentForm) -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">Jihoz ma’lumotlari</h3>
+          </div>
+          <div class="card-body">
+            <!-- Misol tariqasida faqat bir nechta maydon keltiramiz, 
+                 siz esa barcha maydonlarni 3-ustun qilib joylashtirishingiz mumkin -->
+            <div class="row">
+              <div class="col-md-4">
+                <label>{{ equip_form.name.label }}</label>
+                {{ equip_form.name }}
+              </div>
+              <div class="col-md-4">
+                <label>{{ equip_form.measure_type.label }}</label>
+                {{ equip_form.measure_type }}
+              </div>
+              <div class="col-md-4">
+                <label>{{ equip_form.amount.label }}</label>
+                {{ equip_form.amount }}
+              </div>
+            </div>
+            
+            <hr>
+            <div class="row">
+              <div class="col-md-4">
+                <label>{{ equip_form.avilable_type.label }}</label>
+                {{ equip_form.avilable_type }}
+              </div>
+              <div class="col-md-4">
+                <label>{{ equip_form.accepted_date.label }}</label>
+                {{ equip_form.accepted_date }}
+              </div>
+              <div class="col-md-4">
+                <label>{{ equip_form.invert_number.label }}</label>
+                {{ equip_form.invert_number }}
+              </div>
+            </div>
+            
+            <!-- ... qolgan maydonlar ... -->
+
+            <hr>
+            <div class="row">
+              <div class="col-md-6">
+                <label>{{ equip_form.xarakteri.label }}</label>
+                {{ equip_form.xarakteri }}
+              </div>
+              <div class="col-md-6">
+                <label>{{ equip_form.command_file.label }}</label>
+                {{ equip_form.command_file }}
+              </div>
+            </div>
+
+            <hr>
+            <!-- Mavjud xonani tanlash (room) -->
+            <div class="form-group">
+              <label>{{ equip_form.room.label }}</label>
+              {{ equip_form.room }}
+              <small class="text-muted">
+                Agar “Yangi xona qo‘shish” belgilansa, bu tanlov e‘tiborga olinmaydi.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tugmalar -->
+        <div class="text-right mt-3">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Saqlash
+          </button>
+          <a href="#" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Bekor qilish
+          </a>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // "Yangi xona qo‘shish" checkbox belgilanganda form chiqsin
+  $(document).ready(function(){
+      $('#createRoomCheck').on('change', function(){
+          if($(this).is(':checked')){
+              $('#newRoomForm').slideDown();
+          } else {
+              $('#newRoomForm').slideUp();
+          }
+      });
+  });
+</script>
+{% endblock %}

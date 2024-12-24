@@ -142,13 +142,24 @@
                         </li>
 
 						<li class="nav-item">
-                            {% if organization %}
+                            {% if not request.user.is_superuser and organization %}
                                 <a href="{% url 'organization_detail' organization.id %}" class="nav-link">
-                                    Muassasa haqida
+                                    <i class="nav-icon fas fa-building"></i>
+                                    <p>Muassasa haqida</p>
                                 </a>
                             {% else %}
-                                <span class="nav-link text-muted">Muassasa belgilanmagan</span>
+                                <span class="nav-link text-muted">
+                                    <i class="nav-icon fas fa-building"></i>
+                                    <p>Muassasa belgilanmagan</p>
+                                </span>
                             {% endif %}
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="{% url 'equipment_create' %}" class="nav-link">
+                                <i class="nav-icon fas fa-plus-square"></i>
+                                <p>Jihoz qo‘shish</p>
+                            </a>
                         </li>
                         
                         
@@ -175,15 +186,6 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{% url 'admin_dashboard' %}" class="nav-link">
-                                <i class="nav-icon fas fa-folder"></i>
-                                <p>
-                                    Hisobotlar
-                                </p>
-                            </a>
                         </li>
 
                     </ul>
