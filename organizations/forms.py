@@ -102,7 +102,7 @@ class OrganizationForm(forms.ModelForm):
             'education_type': forms.Select(attrs={'class': 'form-control'}),
             'power': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quvvat'}),
             'rating': forms.Select(attrs={'class': 'form-control'}),
-            'students_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Talabalar soni'}),
+            'students_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': "Sig'imi"}),
             'ball': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ball'}),
             'latitude': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Kenglik'}),
             'longitude': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Uzunlik'}),

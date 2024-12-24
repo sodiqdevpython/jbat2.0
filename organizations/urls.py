@@ -8,6 +8,7 @@ urlpatterns = [
     path('user-detail/<uuid:id>/', views.UserDetail.as_view(), name='user_detail'),
     path('organization-detail/<uuid:id>/', views.OrganizationDetail.as_view(), name='org_detail'),
     path('create-organization-user-profile/', views.CreateUserProfileOrganization.as_view(), name='create_org'),
+	path('equipment/<uuid:pk>/', views.EquipmentDetailView.as_view(), name='equipment_detail'),
 	
 	path('messages/inbox/', views.InboxView.as_view(), name='inbox'),
     path('messages/sent/', views.SentView.as_view(), name='sent'),

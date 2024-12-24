@@ -106,7 +106,7 @@
                     <tbody>
                       {% for equipment in equipments %}
                       <tr>
-                        <td>{{ equipment.name.name }}</td>
+                        <td><a href="{% url 'equipment_detail' equipment.pk %}">{{ equipment.name.name }}</a></td>
                         <td>{{ equipment.amount.first }}</td>
                         <td>{{ equipment.equipment_type }}</td>
                         <td>{{ equipment.entered_date }}</td>

@@ -11,10 +11,12 @@ from django.core.paginator import Paginator
 class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('admin_dashboard')
-        else:
-            return render(request, 'org/auth/login.html')
-    
+            if request.user.is_superuser:
+                return redirect('admin_dashboard')  # Admin uchun dashboard
+            else:
+                return redirect('user_dashboard')  # Oddiy foydalanuvchi uchun dashboard
+        return render(request, 'org/auth/login.html')
+
     def post(self, request):
         form = LoginForm(request.POST or None)
         if form.is_valid():
@@ -22,7 +24,11 @@ class LoginView(View):
             user = authenticate(request, username=get_data['username'], password=get_data['password'])
             if user is not None:
                 login(request, user)
-                return redirect('admin_dashboard')
+                # Foydalanuvchi roliga qarab yo'naltirish
+                if user.is_superuser:
+                    return redirect('admin_dashboard')  # Admin uchun dashboard
+                else:
+                    return redirect('user_dashboard')  # Oddiy foydalanuvchi uchun dashboard
             else:
                 error_message = "ID raqam yoki parol xato !"
 
@@ -30,9 +36,10 @@ class LoginView(View):
                     'form': form,
                     'error_message': error_message
                 }
-
                 return render(request, 'org/auth/login.html', context)
-
+        else:
+            error_message = "Ma'lumotlar to'liq va to'g'ri kiritilishi shart!"
+            return render(request, 'org/auth/login.html', {'form': form, 'error_message': error_message})
 
 class LogoutView(View, LoginRequiredMixin):
     def get(self, request):
@@ -173,3 +180,14 @@ class ComposeMessageView(LoginRequiredMixin, View):
             message.save()
             return redirect('sent')
         return render(request, 'messages/compose.html', {'form': form})
+    
+class EquipmentDetailView(LoginRequiredMixin, View):
+    template_name = "admins/org/equipment_detail.html"
+
+    def get(self, request, pk):
+        equipment = get_object_or_404(RoomsEquipment, pk=pk)
+
+        context = {
+            'equipment': equipment
+        }
+        return render(request, self.template_name, context)

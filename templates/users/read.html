@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Sahifa sarlavhasi -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Jihozlar Ro'yxati</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+                        <li class="breadcrumb-item active">Jihozlar</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Asosiy kontent -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Jihozlar jadvali -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tashkilotingizdagi Jihozlar</h3>
+                    <a href="#" class="btn btn-primary btn-sm float-right">
+                        <i class="fas fa-plus"></i> Yangi Jihoz Qo'shish
+                    </a>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Jihoz nomi</th>
+                                <th>Miqdor</th>
+                                <th>Turi</th>
+                                <th>Kiritilgan Sana</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Bu yerda jihozlar ro'yxati chiqadi -->
+                            <tr>
+                                <td>1</td>
+                                <td>Kompyuter</td>
+                                <td>15 dona</td>
+                                <td>Jihoz</td>
+                                <td>2023-10-05</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Proyektor</td>
+                                <td>2 dona</td>
+                                <td>Asbob-uskuna</td>
+                                <td>2023-09-20</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Printer</td>
+                                <td>1 dona</td>
+                                <td>Jihoz</td>
+                                <td>2023-08-12</td>
+                            </tr>
+                            <!-- Jihozlar tugaganidan keyin agar bo'sh bo'lsa: -->
+                            <!-- <tr>
+                                <td colspan="5" class="text-center">Jihozlar mavjud emas.</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+{% endblock %}

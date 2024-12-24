@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+
+    <!-- Asosiy kontent -->
+    <section class="content">
+        <div class="container-fluid">
+
+            <!-- Jihoz asosiy ma'lumotlari kartasi -->
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Jihoz haqida ma'lumot</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- 1-qator: Jihoz nomi, O'lchov turi, Miqdor -->
+                        <div class="col-md-4">
+                            <strong>Jihoz nomi:</strong> {{ equipment.name.name }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>O'lchov turi:</strong> {{ equipment.measure_type }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Miqdor:</strong> {{ equipment.amount.first }} - {{ equipment.amount.second }}
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- 2-qator: Holati, Qabul qilingan sana, Invert raqam -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Holati:</strong> {{ equipment.avilable_type }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Qabul qilingan sana:</strong> {{ equipment.accepted_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Invert raqami:</strong> {{ equipment.invert_number }}
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- 3-qator: Kiritilgan sana, Birinchi foydalanilgan sana, Ishlab chiqarilgan yil -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Kiritilgan sana:</strong> {{ equipment.entered_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Birinchi foydalanilgan sana:</strong> {{ equipment.when_first_time_used }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Ishlab chiqarilgan yil:</strong> {{ equipment.when_made }}
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- 4-qator: Rasmlar, Yillik eskirish foizi, Jihoz turi -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Rasmlar:</strong><br>
+                            {% if equipment.image1 %}
+                                <img src="{{ equipment.image1.url }}" alt="Rasm 1" class="img-fluid img-thumbnail mt-2">
+                            {% endif %}
+                            {% if equipment.image2 %}
+                                <img src="{{ equipment.image2.url }}" alt="Rasm 2" class="img-fluid img-thumbnail mt-2">
+                            {% endif %}
+                            {% if equipment.image3 %}
+                                <img src="{{ equipment.image3.url }}" alt="Rasm 3" class="img-fluid img-thumbnail mt-2">
+                            {% endif %}
+                            {% if not equipment.image1 and not equipment.image2 and not equipment.image3 %}
+                                <p class="text-muted">Rasm mavjud emas.</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Yillik eskirish foizi (%):</strong> {{ equipment.penny_by_year }}%
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Jihoz turi:</strong> {{ equipment.equipment_type }}
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- 5-qator: Xarakteri, Buyruq fayli, Xona/Room -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Jihoz xarakteristikasi:</strong><br>
+                            {% if equipment.xarakteri %}
+                                <p>{{ equipment.xarakteri }}</p>
+                            {% else %}
+                                <p class="text-muted">Xarakteristika kiritilmagan.</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Buyruq fayli:</strong><br>
+                            {% if equipment.command_file %}
+                                <a href="{{ equipment.command_file.url }}" class="btn btn-sm btn-info" target="_blank">
+                                    <i class="fas fa-file-download"></i> Yuklab olish
+                                </a>
+                            {% else %}
+                                <p class="text-muted">Fayl mavjud emas.</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Xona:</strong><br>
+                            {% if equipment.room %}
+                                {{ equipment.room.name.name }} - {{ equipment.room.organization.name }}
+                            {% else %}
+                                <span class="text-muted">Xona biriktirilmagan.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- 6-qator: Kim yaratgan (author), Qaysi organization uchun -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Yaratgan foydalanuvchi:</strong><br>
+                            {% if equipment.author %}
+                                {{ equipment.author.fio }}
+                            {% else %}
+                                <span class="text-muted">Noma'lum</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Muassasa:</strong><br>
+                            {% if equipment.organization_for %}
+                                {{ equipment.organization_for.name }}
+                            {% else %}
+                                <span class="text-muted">Tashkilot belgilanmagan</span>
+                            {% endif %}
+                        </div>
+                        <!-- 3-ustun bo'sh yoki qo'shimcha ma'lumotlar uchun -->
+                        <div class="col-md-4">
+                            <!-- Agar kerak bo'lsa qo'shimcha fieldlar qo'shish mumkin -->
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-footer text-right">
+                    <a href="#" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Orqaga
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

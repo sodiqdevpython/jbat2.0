@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Sahifa sarlavhasi -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Jihoz Qo'shish</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+                        <li class="breadcrumb-item"><a href="#">Jihozlar</a></li>
+                        <li class="breadcrumb-item active">Yangi Jihoz Qo'shish</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Asosiy kontent -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Jihoz yaratish formasi -->
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Jihoz Ma'lumotlarini Kiriting</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <!-- Bu yerda csrf_token bo'ladi kelajakda -->
+                        
+                        <!-- 1-qator: Jihoz nomi, O'lchov turi, Miqdor -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Jihoz nomi</label>
+                                    <select class="form-control">
+                                        <option>Kompyuter</option>
+                                        <option>Printer</option>
+                                        <option>Proyektor</option>
+                                        <option>Skanner</option>
+                                    </select>
+                                    <small class="form-text text-muted">Jihoz nomini tanlang.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>O'lchov turi</label>
+                                    <select class="form-control">
+                                        <option>dona</option>
+                                        <option>juftlik</option>
+                                        <option>to'plam</option>
+                                        <option>quti</option>
+                                    </select>
+                                    <small class="form-text text-muted">Masalan: dona, to'plam, juftlik va h.k.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Miqdor</label>
+                                    <select class="form-control">
+                                        <option>1</option>
+                                        <option>5</option>
+                                        <option>10</option>
+                                        <option>20</option>
+                                    </select>
+                                    <small class="form-text text-muted">Miqdor ketma-ketligi.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2-qator: Holati, Qabul qilingan sana, Invert raqami -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Holati</label>
+                                    <select class="form-control">
+                                        <option>Soz</option>
+                                        <option>Nosoz</option>
+                                        <option>Yaroqsiz</option>
+                                    </select>
+                                    <small class="form-text text-muted">Jihozning texnik holati.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Qabul qilingan sana</label>
+                                    <input type="date" class="form-control" value="2023-10-10">
+                                    <small class="form-text text-muted">Jihoz qachon qabul qilingan?</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Invert raqami</label>
+                                    <input type="text" class="form-control" placeholder="INV-001-2023">
+                                    <small class="form-text text-muted">Jihozga biriktirilgan invert raqami.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3-qator: Kiritilgan sana, Birinchi foydalanilgan sana, Ishlab chiqarilgan yil -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Kiritilgan sana</label>
+                                    <input type="date" class="form-control" value="2023-09-25">
+                                    <small class="form-text text-muted">Jihoz rasmiy kirim qilingan sana.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Birinchi foydalanilgan sana</label>
+                                    <input type="date" class="form-control" value="2023-10-01">
+                                    <small class="form-text text-muted">Jihoz birinchi marotaba qachon ishlatilgan?</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Ishlab chiqarilgan yil</label>
+                                    <input type="number" class="form-control" placeholder="2022" min="1950" max="2024">
+                                    <small class="form-text text-muted">Jihoz ishlab chiqarilgan yil (1950-2024).</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4-qator: Rasmlar (3 ta file), Yillik eskirish foizi, Jihoz turi -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Jihoz rasmlari</label><br>
+                                    <input type="file" class="form-control-file"><br>
+                                    <input type="file" class="form-control-file"><br>
+                                    <input type="file" class="form-control-file">
+                                    <small class="form-text text-muted">3 tagacha rasm yuklashingiz mumkin.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Yillik eskirish foizi (%)</label>
+                                    <input type="number" class="form-control" placeholder="5" min="0" max="100">
+                                    <small class="form-text text-muted">Har yili qancha foiz eskiradi?</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Jihoz turi</label>
+                                    <select class="form-control">
+                                        <option>Asbob uskunalar</option>
+                                        <option>Jihozlar</option>
+                                    </select>
+                                    <small class="form-text text-muted">Masalan: Asbob-uskuna yoki Jihozlar.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5-qator: Xarakteri (textarea), Fayl (command_file) -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Jihoz xarakteristikasi</label>
+                                    <textarea class="form-control" rows="3" placeholder="Jihoz haqida qo'shimcha ma'lumotlar..."></textarea>
+                                    <small class="form-text text-muted">Qo'shimcha xarakteristika.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Buyruq fayli (PDF yoki DOCX)</label>
+                                    <input type="file" class="form-control-file">
+                                    <small class="form-text text-muted">Jihozni qabul qilish bo'yicha buyruq faylini yuklang.</small>
+                                </div>
+                            </div>
+                            <!-- 3-ustun bo'sh qoldiramiz yoki qo'shimcha ma'lumotlar uchun foydalanish mumkin -->
+                            <div class="col-md-4">
+                                <!-- Agar kerak bo'lsa qo'shimcha fieldlar qo'yish mumkin -->
+                            </div>
+                        </div>
+
+                        <div class="form-group text-right">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Saqlash</button>
+                            <a href="#" class="btn btn-secondary"><i class="fas fa-times"></i> Bekor qilish</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

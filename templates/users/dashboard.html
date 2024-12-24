@@ -1,0 +1,230 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Sahifa sarlavhasi -->
+
+    <!-- Asosiy kontent -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Statistikalar qismi -->
+            <div class="row">
+                <!-- Tashkilot nomi -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>Tashkilot nomi</h3>
+                            <p>Umumiy ma'lumot</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rating -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>Yaxshi</h3>
+                            <p>Reyting</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Talabalar soni -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>1200</h3>
+                            <p>Sig'imi</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ball -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>85</h3>
+                            <p>Ball</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Inclusive -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <h3>Ha</h3>
+                            <p>Inclusive</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quvvat (Power) -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-secondary">
+                        <div class="inner">
+                            <h3>450</h3>
+                            <p>Quvvat</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Region (Viloyat) -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-teal">
+                        <div class="inner">
+                            <h3>Toshkent</h3>
+                            <p>Viloyat</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shahar / Tuman -->
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-indigo">
+                        <div class="inner">
+                            <h3>Chilonzor</h3>
+                            <p>Tuman/Shahar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-city"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qo'shimcha ma'lumotlar qismi -->
+            <div class="row">
+                <!-- Chart yoki Grafiglar -->
+                <div class="col-lg-6">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Jihozlar Statistikasi</h3>
+						</div>
+						<div class="card-body">
+							<canvas id="equipmentChart" style="height:250px; min-height:250px"></canvas>
+						</div>
+					</div>
+				</div>
+
+                <!-- Oxirgi ma'lumotlar/So'nggi yangiliklar -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">So'nggi Ma'lumotlar</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Yangi jihoz keltirildi
+                                    <span class="badge badge-info badge-pill">2 kun oldin</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Jihozlar soni yangilandi
+                                    <span class="badge badge-success badge-pill">5 kun oldin</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Reyting yangilandi
+                                    <span class="badge badge-warning badge-pill">1 hafta oldin</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<!-- Chart.js kutubxona -->
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Oylik nomlar
+        const monthNames = [
+            'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 
+            'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+        ];
+    
+        // Bugungi oy
+        const today = new Date();
+        const currentMonth = today.getMonth();
+    
+        // Oxirgi 3 oy
+        const last3Months = [];
+        for (let i = 2; i >= 0; i--) { // Oxiridan boshlash
+            const monthIndex = (currentMonth - i + 12) % 12; // 12 oyning sikli
+            last3Months.push(monthNames[monthIndex]);
+        }
+    
+        // Tasodifiy ma'lumotlar (Backenddan real ma'lumotlarni yuklash mumkin)
+        const equipmentData = [5, 10, 15]; // Misol ma'lumotlar
+    
+        // Grafikni yaratish
+        const ctx = document.getElementById('equipmentChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: last3Months, // Oxirgi 3 oy nomlari
+                datasets: [{
+                    label: 'Jihozlar soni',
+                    data: equipmentData, // Ma'lumotlar
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Oxirgi 3 oy'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jihozlar soni'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}
