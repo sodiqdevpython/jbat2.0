@@ -28,7 +28,7 @@
                                 <tbody>
                                     {% for profile in searched %}
                                     <tr>
-                                        <td>{{ profile.fio }}</td>
+                                        <td><a href="{% url 'user_detail' profile.id %}">{{ profile.fio }}</a></td>
                                         <td>{{ profile.tel_number|phone_number }}</td>
                                         <td>{{ profile.command_expire|date:"d.m.Y" }}</td>
                                         <td>{{ profile.created|date:"d.m.Y" }}</td>

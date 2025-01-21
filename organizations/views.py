@@ -3,9 +3,11 @@ from django.views import View
 from .forms import LoginForm, ContactForm, UserProfileForm, OrganizationForm, MessageForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import FAQ, UserProfile, Organizations, BaseClasses, RoomsEquipment, Message
+from .models import FAQ, UserProfile, Organizations, RoomsEquipment, Message
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.contrib import messages
+from datetime import date, timedelta
 
 
 class LoginView(View):
@@ -24,7 +26,6 @@ class LoginView(View):
             user = authenticate(request, username=get_data['username'], password=get_data['password'])
             if user is not None:
                 login(request, user)
-                # Foydalanuvchi roliga qarab yo'naltirish
                 if user.is_superuser:
                     return redirect('admin_dashboard')  # Admin uchun dashboard
                 else:
@@ -62,35 +63,95 @@ class PublicView(View):
         
         return redirect('public')
 
-    
 class UserDetail(View):
     def get(self, request, id):
         user_profile = get_object_or_404(UserProfile, id=id)
         organization = Organizations.objects.filter(admin=user_profile).first()
-        base_classes = BaseClasses.objects.filter(author=user_profile)
-        equipments = RoomsEquipment.objects.filter(author=user_profile)
-        
+
+        user_equipments = RoomsEquipment.objects.filter(author=user_profile).order_by('-created')
+        paginator = Paginator(user_equipments, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        months_count = 6
+        from datetime import date, timedelta
+        today = date.today()
+        months = [
+            (today.replace(day=1) - timedelta(days=30*i)).replace(day=1)
+            for i in range(months_count)
+        ]
+        months = sorted(months)
+        monthly_equipment_data = []
+        for m in months:
+            monthly_equipment_data.append(
+                user_equipments.filter(entered_date__year=m.year, entered_date__month=m.month).count()
+            )
+        equipment_history = []
+        for eq in user_equipments:
+            eq_hist = eq.history.filter(history_type='+').order_by('-history_date')
+            for h in eq_hist:
+                equipment_history.append(h)
+        equipment_history.sort(key=lambda x: x.history_date, reverse=True)
+
+        sent_messages = Message.objects.filter(sender=user_profile.user).order_by('-timestamp')
+
+        django_user_obj = user_profile.user 
+
         context = {
-            'user_profile': user_profile,
-            'organization': organization,
-            'base_classes': base_classes,
-            'equipments': equipments
+            "user_profile": user_profile,
+            "organization": organization,
+            "page_obj": page_obj,
+            "months_list": [m.strftime("%b %Y") for m in months],
+            "monthly_equipment_data": monthly_equipment_data,
+            "equipment_history": equipment_history,
+            "sent_messages": sent_messages,
+            "django_user": django_user_obj
         }
         return render(request, 'admins/user-detail.html', context)
     
-
 class OrganizationDetail(View):
     def get(self, request, id):
         organization = get_object_or_404(Organizations, id=id)
-        base_classes = BaseClasses.objects.filter(organization=organization)
-        equipments = RoomsEquipment.objects.filter(organization_for=organization)
-        admin_profile = organization.admin
-        
+
+        all_equipments = RoomsEquipment.objects.filter(organization_for=organization).order_by('-created')
+
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(all_equipments, 10)
+        page_obj = paginator.get_page(page_number)
+
+        months_count = 6
+        today = date.today()
+        months = [
+            (today.replace(day=1) - timedelta(days=30*i)).replace(day=1)
+            for i in range(months_count)
+        ]
+        months = sorted(months)
+        monthly_equipment_data = []
+        for m in months:
+            c = all_equipments.filter(
+                entered_date__year=m.year, 
+                entered_date__month=m.month
+            ).count()
+            monthly_equipment_data.append(c)
+
+        equipment_history = []
+        for eq in all_equipments:
+            eq_hist = eq.history.filter(history_type='+').order_by('-history_date')
+            for h in eq_hist:
+                equipment_history.append(h)
+        equipment_history.sort(key=lambda x: x.history_date, reverse=True)
+
+        total_equipment = all_equipments.count()
+        student_count = organization.students_amount
+
         context = {
             'organization': organization,
-            'base_classes': base_classes,
-            'equipments': equipments,
-            'admin_profile': admin_profile
+            'page_obj': page_obj,
+            'months_list': [m.strftime("%b %Y") for m in months],
+            'monthly_equipment_data': monthly_equipment_data,
+            'equipment_history': equipment_history,
+            'total_equipment': total_equipment,
+            'student_count': student_count
         }
         return render(request, 'admins/organization-detail.html', context)
 
@@ -127,13 +188,18 @@ class CreateUserProfileOrganization(View):
             user_profile.is_selected = True
             user_profile.save()
 
+            messages.success(request, "Yangi foydalanuvchi va muassasa muvaffaqiyatli qo'shildi!")
             return redirect('organization_list')
+        else:
+            messages.error(request, "Iltimos, shakldagi xatolarni to‘g‘rilang.")
 
         context = {
             'user_profile_form': user_profile_form,
             'organization_form': organization_form,
         }
-        return render(request, 'admins/create_user_profile_org.html', context)
+        return render(request, 'admins/create_user_profile_org.html', context)     
+        
+
 
 class InboxView(LoginRequiredMixin, View):
     def get(self, request):
@@ -191,3 +257,31 @@ class EquipmentDetailView(LoginRequiredMixin, View):
             'equipment': equipment
         }
         return render(request, self.template_name, context)
+    
+
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from .serializers import RoomsEquipmentSerializer, OrganizationsSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
+class RoomsEquipmentReadOnlyViewSet(ReadOnlyModelViewSet):
+    """
+    Ushbu ViewSet faqat GET (list va retrieve) amallarini taqdim etadi.
+    POST, PUT, PATCH, DELETE - ruxsat berilmaydi.
+    """
+    queryset = RoomsEquipment.objects.all()
+    serializer_class = RoomsEquipmentSerializer
+
+
+class OrganizationsReadOnlyViewSet(ReadOnlyModelViewSet):
+    queryset = Organizations.objects.all()
+    serializer_class = OrganizationsSerializer
+    filter_backends = [
+        DjangoFilterBackend, 
+        filters.SearchFilter, 
+        filters.OrderingFilter
+    ]
+    filterset_fields = ['is_inclusive', 'region', 'district', 'city', 'education_type']
+    search_fields = ['name', 'organization_number']
+    ordering_fields = ['created', 'updated', 'students_amount', 'power', 'ball']
+    ordering = ['-created']

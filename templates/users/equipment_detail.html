@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 {% load static %}
 
 {% block content %}
@@ -128,6 +128,9 @@
                 <div class="card-footer text-right">
                     <a href="#" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Orqaga
+                    </a>
+					<a href="{% url 'equipment_update_user' equipment.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Tahrirlash
                     </a>
                 </div>
             </div>

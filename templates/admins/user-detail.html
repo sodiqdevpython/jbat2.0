@@ -4,126 +4,414 @@
 
 {% block content %}
 <div class="content-wrapper">
-  <section class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Foydalanuvchi Profil</h1>
+    <!-- Ribbon -->
+    <div class="ribbon-wrapper ribbon-lg">
+        <div class="ribbon bg-primary">
+            {{ user_profile.fio }}
         </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
-            <li class="breadcrumb-item active">Profil</li>
-          </ol>
-        </div>
-      </div>
     </div>
-  </section>
 
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- Left Column -->
-        <div class="col-md-4">
-          <div class="card card-primary card-outline">
-            <div class="card-body box-profile text-center">
-              <img class="profile-user-img img-fluid img-circle" src="{% static 'images/user_profile.jpg' %}" alt="User profile picture">
-              <h3 class="profile-username">{{ user_profile.fio }}</h3>
-              <p class="text-muted">{{ user_profile.position.name }}</p>
-              <ul class="list-group list-group-unbordered mb-3">
-                <li class="list-group-item">
-                  <span>Telefon: <a>{{ user_profile.tel_number|phone_number }}</a></span>
-                </li>
-                <li class="list-group-item">
-                  <span>Manzil: <a>{{ user_profile.manzil }}</a></span>
-                </li>
-                <li class="list-group-item">
-                  <span>PINFL: <a>{{ user_profile.pinfl }}</a></span>
-                </li>
-              </ul>
-              <a href="#" class="btn btn-primary btn-block"><b>Aktiv</b></a>
+    <!-- Content Header -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Foydalanuvchi Profili</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+                        <li class="breadcrumb-item active">Foydalanuvchi</li>
+                    </ol>
+                </div>
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- Right Column -->
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-header p-2">
-              <ul class="nav nav-pills">
-                <li class="nav-item"><a class="nav-link active" href="#organization" data-toggle="tab">Tashkilot</a></li>
-                <li class="nav-item"><a class="nav-link" href="#classes" data-toggle="tab">Sinflar</a></li>
-                <li class="nav-item"><a class="nav-link" href="#equipments" data-toggle="tab">Jihozlar</a></li>
-              </ul>
+    <!-- Profil & Muassasa & Timeline -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Chap ustun -->
+                <div class="col-md-4">
+                    <!-- Foydalanuvchi Profil Kartasi -->
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile text-center">
+                            <img class="profile-user-img img-fluid img-circle"
+                                 src="{% static 'images/user_profile.jpg' %}"
+                                 alt="User profile picture">
+                            <h3 class="profile-username">{{ user_profile.fio }}</h3>
+                            <p class="text-muted">
+                                {% if user_profile.position %}
+                                    {{ user_profile.position.name }}
+                                {% else %}
+                                    Lavozim belgilanmagan
+                                {% endif %}
+                            </p>
+
+                            <ul class="list-group list-group-unbordered mb-3 text-left">
+                                <li class="list-group-item">
+                                    <b>Telefon:</b>
+                                    <span class="float-right">{{ user_profile.tel_number|phone_number }}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Manzil:</b>
+                                    <span class="float-right">{{ user_profile.manzil }}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>PINFL:</b>
+                                    <span class="float-right">{{ user_profile.pinfl }}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Biriktirilganmi?</b>
+                                    <span class="float-right badge 
+                                        {% if user_profile.is_selected %}badge-success
+                                        {% else %}badge-danger{% endif %}">
+                                        {% if user_profile.is_selected %}Ha{% else %}Yo'q{% endif %}
+                                    </span>
+                                </li>
+                            </ul>
+                            
+                            <!-- Tahrirlash tugmasi -->
+                            <a href="{% url 'user_update' user_profile.id  %}" class="btn btn-warning btn-block">
+                                <i class="fas fa-edit"></i> Tahrirlash
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Area Chart: Oxirgi oylar bo'yicha jihoz qo'shish soni -->
+                    <div class="card">
+                        <div class="card-header bg-info">
+                            <h3 class="card-title">Oxirgi oylar bo'yicha jihoz qo'shish faolligi</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="userEquipmentChart" style="height: 250px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O'ng ustun -->
+                <div class="col-md-8">
+                    <div class="card card-tabs">
+                        <div class="card-header p-2">
+                            <ul class="nav nav-pills">
+                                <!-- 1) Muassasa -->
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#organization" data-toggle="tab">
+                                        Muassasa
+                                    </a>
+                                </li>
+                                <!-- 2) Timeline -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#timeline" data-toggle="tab">
+                                        Timeline
+                                    </a>
+                                </li>
+                                <!-- 3) Barcha Ma'lumotlar -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#all_data" data-toggle="tab">
+                                        Barcha Ma'lumotlar
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <!-- Muassasa -->
+                                <div class="tab-pane active" id="organization">
+                                    <h4 class="text-center mb-3">Tashkilot</h4>
+                                    {% if organization %}
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <b>Nomi:</b> {{ organization.name }}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <b>Turi:</b> {{ organization.education_type }}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <b>Viloyat:</b> {{ organization.region.name }}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <b>O'quvchilar soni:</b> {{ organization.students_amount }} ta
+                                        </li>
+                                    </ul>
+                                    {% else %}
+                                    <p class="text-muted text-center">Tashkilot biriktirilmagan.</p>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Timeline -->
+                                <div class="tab-pane" id="timeline">
+                                    <div class="timeline timeline-inverse">
+                                        {% for hist in equipment_history %}
+                                        <div class="time-label">
+                                            <span class="bg-warning">
+                                                {{ hist.history_date|date:"d M Y H:i" }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-tools bg-info"></i>
+                                            <div class="timeline-item">
+                                                <span class="time">
+                                                    <i class="fas fa-clock"></i> 
+                                                    {{ hist.history_date|time:"H:i" }}
+                                                </span>
+                                                <h3 class="timeline-header">
+                                                    {% if hist.name %}
+                                                        {{ hist.name.name }}
+                                                    {% else %}
+                                                        Noma'lum jihoz
+                                                    {% endif %}
+                                                </h3>
+                                                <div class="timeline-body">
+                                                    <b>Tarixiy o'zgarish turi:</b>
+                                                    {% if hist.history_type == '+' %}
+                                                        Yaratilgan
+                                                    {% elif hist.history_type == '~' %}
+                                                        Tahrirlangan
+                                                    {% elif hist.history_type == '-' %}
+                                                        O'chirilgan
+                                                    {% endif %}
+                                                    <br>
+                                                    <b>Miqdor:</b> {{ hist.amount }} ta
+                                                    <br>
+                                                    <b>Turi:</b> {{ hist.equipment_type }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        <div>
+                                            <i class="fas fa-clock bg-gray"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Yangi Tab: Barcha Ma'lumotlar -->
+                                <div class="tab-pane" id="all_data">
+                                    <h4 class="text-center">Barcha Ma'lumotlar</h4>
+                                    <div class="row">
+                                        <!-- Django User modelidan olingan ma'lumotlar -->
+                                        <div class="col-md-6">
+                                            <div class="card card-info">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Umumiy</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <b>Foydalanuvchi nomi:</b>
+                                                            <span class="float-right">{{ django_user.username }}</span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Oxirgi login:</b>
+                                                            <span class="float-right">
+                                                                {{ django_user.last_login|date:"d.m.Y H:i" }}
+                                                            </span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Asosiy adminmi ?:</b>
+                                                            <span class="float-right badge
+                                                                {% if django_user.is_superuser %}
+                                                                    badge-success
+                                                                    ha
+                                                                {% else %}
+                                                                    badge-danger
+                                                                {% endif %}">
+                                                                Yo'q
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Foydalanuvchi yuborgan xabarlar (agar kerak bo'lsa) -->
+                                        <div class="col-md-6">
+                                            <div class="card card-success">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Yuborgan xabarlari</h3>
+                                                </div>
+                                                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                                                    {% if sent_messages %}
+                                                    <ul class="list-group">
+                                                        {% for msg in sent_messages %}
+                                                        <li class="list-group-item">
+                                                            <b>{{ msg.subject }}</b>
+                                                            <br>
+                                                            {{ msg.body|slice:50 }}...
+                                                            <span class="float-right">
+                                                                {{ msg.timestamp|date:"d.m.Y H:i" }}
+                                                            </span>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    {% else %}
+                                                    <p class="text-muted">Yuborgan xabarlar topilmadi</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Boshqa istalgan foydalanuvchi ma'lumotlarini ham shu yerga qo'shing -->
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card card-secondary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Qo'shimcha Ma'lumotlar</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <b>Passport raqami:</b>
+                                                            <span class="float-right">{{ user_profile.passport_id }}</span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Tug‘ilgan sana:</b>
+                                                            <span class="float-right">{{ user_profile.born_in|date:"d.m.Y" }}</span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Otasining ismi:</b>
+                                                            <span class="float-right">{{ user_profile.father_name }}</span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Buyruq tugash vaqti:</b>
+                                                            <span class="float-right">
+                                                                {% if user_profile.command_expire %}
+                                                                    {{ user_profile.command_expire|date:"d.m.Y" }}
+                                                                {% else %}
+                                                                    -
+                                                                {% endif %}
+                                                            </span>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Buyruq fayli:</b>
+                                                            <span class="float-right">
+                                                                {% if user_profile.command_pdf %}
+                                                                    <a href="{{ user_profile.command_pdf.url }}"
+                                                                       target="_blank">Ko‘rish</a>
+                                                                {% else %}
+                                                                    -
+                                                                {% endif %}
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div> <!-- /all_data tab -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-              <div class="tab-content">
-                <!-- Organization Tab -->
-                <div class="active tab-pane" id="organization">
-                  <h4 class="text-center">Tashkilot</h4>
-                  {% if organization %}
-                  <ul class="list-group">
-                    <li class="list-group-item"><b>Nom:</b> {{ organization.name }}</li>
-                    <li class="list-group-item"><b>Turi:</b> {{ organization.education_type }}</li>
-                    <li class="list-group-item"><b>Viloyat:</b> {{ organization.region.name }}</li>
-                    <li class="list-group-item"><b>O'quvchilar soni:</b> {{ organization.students_amount }}</li>
-                  </ul>
-                  {% else %}
-                  <p class="text-muted text-center">Tashkilot topilmadi.</p>
-                  {% endif %}
-                </div>
 
-                <!-- Classes Tab -->
-                <div class="tab-pane" id="classes">
-                  <h4 class="text-center">Umumiy Sinflar</h4>
-                  {% if base_classes %}
-                  <ul class="list-group">
-                    {% for base_class in base_classes %}
-                    <li class="list-group-item">
-                      <b>{{ base_class.name.name }}</b>
-                      <small class="text-muted">({{ base_class.subtitle.name }})</small>
-                    </li>
-                    {% endfor %}
-                  </ul>
-                  {% else %}
-                  <p class="text-muted text-center">Sinflar topilmadi.</p>
-                  {% endif %}
+            <!-- Pastda - Foydalanuvchi qo'shgan jihozlar Cards + Paginatsiya -->
+            <hr>
+            <h4 class="text-center mb-3">Foydalanuvchi qo'shgan jihozlar</h4>
+            <div class="row">
+                {% for eq in page_obj %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="card card-primary card-outline">
+                        <!-- Card Header -->
+                        <div class="card-header text-center">
+                            <h5 class="card-title mb-0">{{ eq.name.name }}</h5>
+                        </div>
+                        <!-- Image overlay -->
+                        <div class="card-body p-0 position-relative">
+                            {% if eq.image1 %}
+                                <img class="img-fluid"
+                                     src="{{ eq.image1.url }}"
+                                     alt="Equipment Image"
+                                     style="width: 100%; height: 220px; object-fit: cover;">
+                            {% else %}
+                                <img class="img-fluid"
+                                     src="{% static 'images/default_equipment.png' %}"
+                                     alt="Default Equipment"
+                                     style="width: 100%; height: 220px; object-fit: cover;">
+                            {% endif %}
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon bg-primary">
+                                    {{ eq.equipment_type }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="card-footer">
+                            <p class="mb-1"><b>Miqdor:</b> {{ eq.amount }} ta</p>
+                            <p class="mb-1"><b>Kiritilgan sana:</b> {{ eq.entered_date|date:"d.m.Y" }}</p>
+                            <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-info btn-block">
+                                <i class="fas fa-eye"></i> Ko‘rish
+                            </a>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Equipments Tab -->
-                <div class="tab-pane" id="equipments">
-                  <h4 class="text-center">Jihozlar</h4>
-                  {% if equipments %}
-                  <table class="table table-bordered table-hover">
-                    <thead>
-                      <tr>
-                        <th>Jihoz nomi</th>
-                        <th>Miqdor</th>
-                        <th>Turi</th>
-                        <th>Kiritilgan sana</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for equipment in equipments %}
-                      <tr>
-                        <td><a href="{% url 'equipment_detail' equipment.pk %}">{{ equipment.name.name }}</a></td>
-                        <td>{{ equipment.amount.first }}</td>
-                        <td>{{ equipment.equipment_type }}</td>
-                        <td>{{ equipment.entered_date }}</td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                  {% else %}
-                  <p class="text-muted text-center">Jihozlar topilmadi.</p>
-                  {% endif %}
-                </div>
-              </div>
+                {% endfor %}
             </div>
-          </div>
+
+            <!-- Paginatsiya -->
+            <div class="mt-3">
+                <nav aria-label="Equipment page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                &laquo;
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                &raquo;
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 </div>
+
+<!-- Chart.js -->
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+<script>
+    // Area Chart: Oxirgi oylar bo'yicha foydalanuvchi qo'shgan jihozlar soni
+    const areaCtx = document.getElementById('userEquipmentChart').getContext('2d');
+    const areaChart = new Chart(areaCtx, {
+        type: 'line',
+        data: {
+            labels: {{ months_list|safe }}, // Masalan: ['Apr 2023', 'May 2023', ...]
+            datasets: [{
+                label: 'Jihozlar soni',
+                data: {{ monthly_equipment_data|safe }}, // [2, 5, 3, ...]
+                backgroundColor: 'rgba(60,141,188,0.2)',
+                borderColor: 'rgba(60,141,188,1)',
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: true
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stepSize: 1
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

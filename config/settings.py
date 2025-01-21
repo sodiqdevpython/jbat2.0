@@ -39,8 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'drf_yasg',
     # 'whitenoise.runserver_nostatic',
     'django_select2',
+	'debug_toolbar',
+	'rest_framework',
+	'django_filters',
+	'storages',
 
     #local
     'organizations',
@@ -48,15 +53,29 @@ INSTALLED_APPS = [
     'users'
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter'
+    ],
+    # boshqa sozlamalar ...
+}
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-	# 'whitenoise.middleware.WhiteNoiseMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1"
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -199,3 +218,18 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = "EOP2OPU22TS2YN5M12K8"         # 1-qadamda olingan
+AWS_SECRET_ACCESS_KEY = "zbzieGaeqQ4MvIkcmpfXnAXvfJnadWT6rW5N5L7c"  # 1-qadamda olingan
+AWS_STORAGE_BUCKET_NAME = "sodiq-oydinov-test1"  # wasabi console'da yaratgan bucketingiz
+
+AWS_S3_REGION_NAME = "us-east-1"  # wasabi bucket ni yaratgan region
+AWS_S3_ENDPOINT_URL = "https://s3.us-east-1.wasabisys.com"  # wasabi doc'ga qarab
+
+AWS_DEFAULT_ACL = None  # public-read yoki None
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+AWS_S3_ADDRESSING_STYLE = "virtual"

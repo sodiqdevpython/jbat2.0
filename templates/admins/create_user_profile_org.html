@@ -3,11 +3,17 @@
 
 {% block content %}
 <div class="content-wrapper">
+    <!-- Toastr CSS & JS -->
+    <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}">
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+
+    <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Foydalanuvchi, Profil va Tashkilot Yaratish</h1>
+                    <h1>Yangi muassasa qo'shish</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -19,173 +25,278 @@
         </div>
     </section>
 
+    <!-- Agar messages bo‘lsa, Toastrda chiqaramiz -->
+    {% if messages %}
+    <script>
+        $(document).ready(function(){
+            {% for message in messages %}
+                toastr["{{ message.tags }}"]("{{ message }}");
+            {% endfor %}
+        });
+    </script>
+    {% endif %}
+
     <section class="content">
         <div class="container-fluid">
             <div class="card card-primary card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">Foydalanuvchi, Profil va Tashkilot Ma'lumotlari</h3>
-                </div>
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <!-- Profil ma'lumotlari -->
-                        <h5 class="mb-3">Profil ma'lumotlari</h5>
+                        <!-- 1) Foydalanuvchi ma'lumotlari -->
+                        <h5 class="mb-3 text-primary">Foydalanuvchi ma'lumotlari</h5>
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <!-- 1-qator: 4 ustun -->
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.first_name.label_tag }}
                                 {{ user_profile_form.first_name }}
+                                {% if user_profile_form.first_name.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.first_name.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.last_name.label_tag }}
                                 {{ user_profile_form.last_name }}
+                                {% if user_profile_form.last_name.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.last_name.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
-                                {{ user_profile_form.born_in.label_tag }}
-                                {{ user_profile_form.born_in }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.father_name.label_tag }}
                                 {{ user_profile_form.father_name }}
+                                {% if user_profile_form.father_name.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.father_name.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
+                                {{ user_profile_form.born_in.label_tag }}
+                                {{ user_profile_form.born_in }}
+                                {% if user_profile_form.born_in.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.born_in.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- 2-qator: 4 ustun -->
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.passport_id.label_tag }}
                                 {{ user_profile_form.passport_id }}
+                                {% if user_profile_form.passport_id.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.passport_id.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.pinfl.label_tag }}
                                 {{ user_profile_form.pinfl }}
+                                {% if user_profile_form.pinfl.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.pinfl.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.position.label_tag }}
                                 {{ user_profile_form.position }}
+                                {% if user_profile_form.position.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.position.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.tel_number.label_tag }}
                                 {{ user_profile_form.tel_number }}
+                                {% if user_profile_form.tel_number.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.tel_number.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                        </div>
+
+                        <!-- 3-qator: 4 ustun -->
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.manzil.label_tag }}
                                 {{ user_profile_form.manzil }}
+                                {% if user_profile_form.manzil.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.manzil.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.command_expire.label_tag }}
                                 {{ user_profile_form.command_expire }}
+                                {% if user_profile_form.command_expire.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.command_expire.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.command_pdf.label_tag }}
                                 {{ user_profile_form.command_pdf }}
+                                {% if user_profile_form.command_pdf.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.command_pdf.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <!-- Bo'sh maydon uchun -->
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <!-- Parol -->
-                        <h5 class="mb-3">Foydalanuvchi Paroli</h5>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ user_profile_form.password.label_tag }}
                                 {{ user_profile_form.password }}
-                            </div>
-                            <div class="col-md-8 mb-3">
-                                <!-- Bo'sh maydon uchun -->
+                                {% if user_profile_form.password.errors %}
+                                    <div class="text-danger small">
+                                        {{ user_profile_form.password.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
 
                         <hr>
 
-                        <!-- Tashkilot ma'lumotlari -->
-                        <h5 class="mb-3">Tashkilot Ma'lumotlari</h5>
+                        <!-- 2) Muassasa ma'lumotlari -->
+                        <h5 class="mb-3 text-primary">Muassasa ma'lumotlari</h5>
+                        <!-- 1-qator -->
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.organization_number.label_tag }}
                                 {{ organization_form.organization_number }}
+                                {% if organization_form.organization_number.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.organization_number.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.name.label_tag }}
                                 {{ organization_form.name }}
+                                {% if organization_form.name.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.name.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.education_type.label_tag }}
                                 {{ organization_form.education_type }}
+                                {% if organization_form.education_type.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.education_type.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.power.label_tag }}
                                 {{ organization_form.power }}
+                                {% if organization_form.power.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.power.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
+                        </div>
+
+                        <!-- 2-qator -->
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.is_inclusive.label_tag }}
                                 {{ organization_form.is_inclusive }}
+                                {% if organization_form.is_inclusive.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.is_inclusive.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
-                                {{ organization_form.rating.label_tag }}
-                                {{ organization_form.rating }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.students_amount.label_tag }}
                                 {{ organization_form.students_amount }}
+                                {% if organization_form.students_amount.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.students_amount.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3">
-                                {{ organization_form.ball.label_tag }}
-                                {{ organization_form.ball }}
-                            </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.latitude.label_tag }}
                                 {{ organization_form.latitude }}
+                                {% if organization_form.latitude.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.latitude.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 {{ organization_form.longitude.label_tag }}
                                 {{ organization_form.longitude }}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                {{ organization_form.region.label_tag }}
-                                {{ organization_form.region }}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                {{ organization_form.location_type.label_tag }}
-                                {{ organization_form.location_type }}
+                                {% if organization_form.longitude.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.longitude.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
 
+                        <!-- 3-qator -->
                         <div class="row">
-                            <div class="col-md-4 mb-3" id="city-field" style="display: none;">
+                            <div class="col-md-3 mb-3">
+                                {{ organization_form.region.label_tag }}
+                                {{ organization_form.region }}
+                                {% if organization_form.region.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.region.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ organization_form.location_type.label_tag }}
+                                {{ organization_form.location_type }}
+                                {% if organization_form.location_type.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.location_type.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 mb-3" id="city-field" style="display: none;">
                                 {{ organization_form.city.label_tag }}
                                 {{ organization_form.city }}
+                                {% if organization_form.city.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.city.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4 mb-3" id="district-field" style="display: none;">
+                            <div class="col-md-3 mb-3" id="district-field" style="display: none;">
                                 {{ organization_form.district.label_tag }}
                                 {{ organization_form.district }}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <!-- Bo'sh maydon uchun -->
+                                {% if organization_form.district.errors %}
+                                    <div class="text-danger small">
+                                        {{ organization_form.district.errors.0 }}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
 
                         <div class="row mt-4">
                             <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-success mr-2">Saqlash</button>
-                                <a href="#" class="btn btn-secondary">Bekor qilish</a>
+                                <button type="submit" class="btn btn-success mr-2">
+                                    <i class="fas fa-save"></i> Saqlash
+                                </button>
+                                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                                    Bekor qilish
+                                </a>
                             </div>
                         </div>
                     </form>
@@ -195,7 +306,7 @@
     </section>
 </div>
 
-
+<!-- JavaScript: city/district toggle -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const locationTypeSelect = document.getElementById('id_location_type');
@@ -215,11 +326,9 @@
                 districtField.style.display = 'none';
             }
         }
-
-        // Initial call
+        // Initial
         toggleLocationFields();
-
-        // Event listener
+        // On change
         locationTypeSelect.addEventListener('change', toggleLocationFields);
     });
 </script>

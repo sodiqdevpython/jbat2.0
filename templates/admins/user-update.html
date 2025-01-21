@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+
+  <!-- Toastr CSS & JS -->
+  <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}">
+  <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Foydalanuvchini tahrirlash</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+            <li class="breadcrumb-item active">Tahrirlash</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agar messages bor bo‘lsa, Toastr bilan ko‘rsatamiz -->
+  {% if messages %}
+  <script>
+    $(document).ready(function() {
+      {% for message in messages %}
+        toastr["{{ message.tags }}"]("{{ message }}");
+      {% endfor %}
+    });
+  </script>
+  {% endif %}
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Form Card -->
+        <div class="col-md-12">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Foydalanuvchi: {{ user_profile.fio }}</h3>
+            </div>
+            <!-- /.card-header -->
+
+            <!-- Form starts -->
+            <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="card-body">
+                <!-- 1-qator -->
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label for="id_first_name">Ism</label>
+                    {{ form.first_name }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_last_name">Familiya</label>
+                    {{ form.last_name }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_father_name">Otasining ismi</label>
+                    {{ form.father_name }}
+                  </div>
+                </div>
+
+                <!-- 2-qator -->
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label for="id_born_in">Tug'ilgan sana</label>
+                    {{ form.born_in }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_passport_id">Passport raqami</label>
+                    {{ form.passport_id }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_manzil">Manzil</label>
+                    {{ form.manzil }}
+                  </div>
+                </div>
+
+                <!-- 3-qator -->
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label for="id_pinfl">PINFL</label>
+                    {{ form.pinfl }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_position">Lavozim</label>
+                    {{ form.position }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_tel_number">Telefon</label>
+                    {{ form.tel_number }}
+                  </div>
+                </div>
+
+                <!-- 4-qator (ixtiyoriy) -->
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label for="id_command_expire">Buyruq tugash vaqti</label>
+                    {{ form.command_expire }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="id_command_pdf">Buyruq fayli (pdf/docx)</label>
+                    {{ form.command_pdf }}
+                  </div>
+                  <!-- Agar yana bitta col kerak bo'lsa, shu yerga yozing -->
+                  <div class="form-group col-md-4">
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Saqlash
+                </button>
+                <a href="{% url 'user_detail' user_profile.id %}" class="btn btn-secondary float-right">
+                  Bekor qilish
+                </a>
+              </div>
+            </form>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

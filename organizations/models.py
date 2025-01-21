@@ -1,7 +1,7 @@
 from django.db import models
 from utils.models import BaseModel
 from django.contrib.auth.models import User
-from utils.choice import OrganizationsType, OrganizationsRatingType,MeasureType, EquipmentType, AvilableType
+from utils.choice import OrganizationsType,MeasureType, EquipmentType, AvilableType
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator, FileExtensionValidator
 
 
@@ -61,7 +61,6 @@ class Organizations(BaseModel):
     education_type = models.CharField(max_length=32, choices=OrganizationsType.choices)
     power = models.PositiveBigIntegerField(default=0)
     is_inclusive = models.BooleanField(default=False)
-    rating = models.CharField(max_length=16, choices=OrganizationsRatingType.choices, null=True, blank=True)
 
     district = models.ForeignKey(Districts, on_delete=models.CASCADE, null=True, blank=True)
     city = models.ForeignKey(Cities, on_delete=models.CASCADE, null=True, blank=True)
@@ -95,66 +94,6 @@ class Organizations(BaseModel):
 
 #! / Muassasa
 
-
-#! Umumiy sinf turlari
-
-class BaseClassCategory(BaseModel):
-    name = models.CharField(max_length=512, unique=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Umumiy sinf turi"
-        verbose_name_plural = "Umumiy sinf turlari"
-
-#! /Umumiy sinf turlari
-
-
-#! Umumiy sinf subtitle 
-
-class BaseClassSubtitle(BaseModel):
-    name = models.CharField(max_length=256, unique=True)
-
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = "Umumiy sinf subtitle"
-        verbose_name_plural = "Umumiy sinf subtitles"
-
-#! /Umumiy sinf subtitle 
-
-
-#! Umumiy sinflar
-
-class BaseClasses(BaseModel):
-    organization = models.ForeignKey('organizations.Organizations', on_delete=models.CASCADE)
-    name = models.ForeignKey(BaseClassCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    subtitle = models.ForeignKey(BaseClassSubtitle, on_delete=models.SET_NULL, null=True, blank=True)
-    author = models.ForeignKey('organizations.UserProfile', on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return str(self.name.name)
-    
-    class Meta:
-        verbose_name = "Umumiy sinf"
-        verbose_name_plural = "Umumiy sinflar"
-        unique_together = ['organization', 'name']
-
-#! /Umumiy sinflar
-
-#! Sinf xonadagi o'quvchilar sig'imi va ajratilgan jihozlar soni ketma ketligi
-
-class AmountSelect(BaseModel):
-    first = models.CharField(max_length=128, unique=True)
-    second = models.CharField(max_length=256 ,unique=True)
-
-    def __str__(self):
-        return f"{self.first} | {self.second}"
-
-#! Sinf xonadagi o'quvchilar sig'imi va ajratilgan jihozlar soni ketma ketligi
-
 class EquipmentName(BaseModel):
     name = models.CharField(max_length=1024, validators=[MinLengthValidator(3, "Jihoz nomi juda qisqa, xato kiritgan bo'lishingiz mumkin !")], unique=True)
 
@@ -169,7 +108,7 @@ class EquipmentName(BaseModel):
 class RoomsEquipment(BaseModel):
     name = models.ForeignKey(EquipmentName, on_delete=models.SET_NULL, null=True)
     measure_type = models.CharField(max_length=8, choices=MeasureType.choices)
-    amount = models.ForeignKey(AmountSelect, on_delete=models.SET_NULL, null=True, blank=True) # shu jihozdan nechtaligi
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(limit_value=1, message='Kamida bitta jihoz bo\'lishi kerak')]) # shu jihozdan nechtaligi
 
     avilable_type = models.CharField(max_length=32, choices=AvilableType.choices)
 
@@ -193,8 +132,6 @@ class RoomsEquipment(BaseModel):
     xarakteri = models.TextField(null=True, blank=True)
 
     equipment_type = models.CharField(max_length=16, choices=EquipmentType.choices)
-
-    room = models.ForeignKey(BaseClasses, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_room')
 
     author = models.ForeignKey('organizations.UserProfile', on_delete=models.SET_NULL, null=True, blank=True)
 

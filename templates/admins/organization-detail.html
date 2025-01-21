@@ -3,6 +3,15 @@
 
 {% block content %}
 <div class="content-wrapper">
+
+  <!-- Ribbon -->
+  <div class="ribbon-wrapper ribbon-lg">
+    <div class="ribbon bg-primary">
+      {{ organization.name }}
+    </div>
+  </div>
+
+  <!-- Content Header -->
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
@@ -12,133 +21,354 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
-            <li class="breadcrumb-item active">Muassasa Profil</li>
+            <li class="breadcrumb-item active">Muassasa profil</li>
           </ol>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Main Content -->
   <section class="content">
     <div class="container-fluid">
+
+      <!-- Small Box-lar (3-4 ta) -->
       <div class="row">
-        <!-- Left Column -->
+        <div class="col-lg-4 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>{{ student_count }}</h3>
+              <p>O'quvchilar sig'imi</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-stalker"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-6">
+          <div class="small-box bg-success">
+            <div class="inner">
+              <h3>{{ total_equipment }}</h3>
+              <p>Jihozlar soni</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-wrench"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-6">
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h3>{{ organization.power }}</h3>
+              <p>Quvvat</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-flash"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Satr: Chap card (org info + area chart), o'ng card (tabs) -->
+      <div class="row">
+        <!-- CHAP USTUN -->
         <div class="col-md-4">
+          <!-- Org info card -->
           <div class="card card-primary card-outline">
             <div class="card-body box-profile">
               <h3 class="profile-username">{{ organization.name }}</h3>
-              <p class="text-muted">Turi: {{ organization.education_type }}</p>
-              <p class="text-muted">O'quvchilar soni: {{ organization.students_amount }}</p>
-              <p class="text-muted">Hudud: {{ organization.region.name }}</p>
-              <p class="text-muted">
-                Manzil: 
+              <p class="text-muted mb-1">
+                <b>Turi:</b> {{ organization.education_type }}
+              </p>
+              <p class="text-muted mb-1">
+                <b>Hudud:</b> {{ organization.region.name }}
+              </p>
+              <p class="text-muted mb-1">
+                <b>Manzil:</b>
                 {% if organization.district %}
                   {{ organization.district.name }}
                 {% elif organization.city %}
                   {{ organization.city.name }}
                 {% else %}
-                  <span class="text-muted">Manzil ko'rsatilmagan</span>
+                  Noma'lum
                 {% endif %}
               </p>
-              <p class="text-muted">Ball: {{ organization.ball }}</p>
-              <ul class="list-group list-group-unbordered mb-3">
+              <p class="text-muted mb-1">
+                <b>Quvvat:</b> {{ organization.power }}
+              </p>
+              <ul class="list-group list-group-unbordered mb-3 mt-3">
                 <li class="list-group-item">
-                  <b>Inkluzivligi:</b> <span class="float-right">{{ organization.is_inclusive|yesno:"Ha,Yo'q" }}</span>
-                </li>
-                <li class="list-group-item">
-                  <b>Reyting:</b> <span class="float-right">{{ organization.rating }}</span>
-                </li>
-                <li class="list-group-item">
-                  <b>Quvvat:</b> <span class="float-right">{{ organization.power }}</span>
+                  <b>Inkluzivligi:</b>
+                  <span class="float-right">{{ organization.is_inclusive|yesno:"Ha,Yo'q" }}</span>
                 </li>
               </ul>
-              {% if admin_profile %}
-              <h5>Admin haqida</h5>
-              <ul class="list-group">
-                <li class="list-group-item"><b>Ismi:</b> {{ admin_profile.fio }}</li>
-                <li class="list-group-item"><b>Telefon:</b> {{ admin_profile.tel_number }}</li>
-                <li class="list-group-item"><b>Manzil:</b> {{ admin_profile.manzil }}</li>
-              </ul>
-              {% endif %}
+
+              <!-- Tahrirlash tugmasi -->
+              <div class="text-center">
+                <a href="{% url 'update_organization' organization.id %}"
+                   class="btn btn-warning">
+                   <i class="fas fa-edit"></i> Tahrirlash
+                </a>
+              </div>
+              
+            </div>
+          </div>
+
+          <!-- Area Chart (Oxirgi oylar bo‘yicha jihoz qo‘shilish) -->
+          <div class="card">
+            <div class="card-header bg-info">
+              <h3 class="card-title">Oxirgi oylar bo‘yicha jihoz qo‘shilish</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="orgEquipmentChart" style="height: 250px;"></canvas>
             </div>
           </div>
         </div>
 
-        <!-- Right Column -->
+        <!-- O'NG USTUN -->
         <div class="col-md-8">
-          <div class="card">
+          <div class="card card-tabs">
             <div class="card-header p-2">
               <ul class="nav nav-pills">
-                <li class="nav-item"><a class="nav-link active" href="#classes" data-toggle="tab">Sinflar</a></li>
-                <li class="nav-item"><a class="nav-link" href="#equipments" data-toggle="tab">Jihozlar</a></li>
-                <li class="nav-item"><a class="nav-link" href="#statistics" data-toggle="tab">Statistika</a></li>
+                <li class="nav-item">
+                  <a class="nav-link active" href="#info" data-toggle="tab">Umumiy Ma’lumot</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#equipments" data-toggle="tab">Jihozlar</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#map" data-toggle="tab">Xarita</a>
+                </li>
               </ul>
             </div>
             <div class="card-body">
               <div class="tab-content">
-                <!-- Classes Tab -->
-                <div class="active tab-pane" id="classes">
-                  <h4 class="mb-3">Umumiy Sinflar</h4>
-                  {% if base_classes %}
+                <!-- 1) Umumiy Ma'lumot -->
+                <div class="active tab-pane" id="info">
+                  <h4 class="mb-3">Muassasa haqida</h4>
                   <ul class="list-group">
-                    {% for base_class in base_classes %}
                     <li class="list-group-item">
-                      <b>{{ base_class.name.name }}</b>
-                      <small class="text-muted">({{ base_class.subtitle.name }})</small>
+                      <b>Muassasa raqami:</b> {{ organization.organization_number }}
                     </li>
-                    {% endfor %}
+                    <li class="list-group-item">
+                      <b>Kenglik / Uzunlik:</b> {{ organization.latitude }} / {{ organization.longitude }}
+                    </li>
+                    <li class="list-group-item">
+                      <b>Yaratilgan sana:</b> {{ organization.created|date:"d.m.Y H:i" }}
+                    </li>
+                    <li class="list-group-item">
+                      <b>Yangilangan sana:</b> {{ organization.updated|date:"d.m.Y H:i" }}
+                    </li>
                   </ul>
-                  {% else %}
-                  <p class="text-muted">Sinflar mavjud emas.</p>
-                  {% endif %}
+                  <div class="mt-3">
+                    <a href="{% url 'organization_equipments' organization.id %}" class="btn btn-secondary">
+                      <i class="fas fa-list"></i> Barcha Jihozlar
+                    </a>
+                  </div>
                 </div>
 
-                
+                <!-- 2) Jihozlar (10 tadan, card + paginatsiya) -->
                 <div class="tab-pane" id="equipments">
-                  <h4 class="text-center">Jihozlar</h4>
-                  {% if equipments %}
-                  <table class="table table-bordered table-hover">
-                    <thead>
-                      <tr>
-                        <th>Jihoz nomi</th>
-                        <th>Miqdor</th>
-                        <th>Turi</th>
-                        <th>Kiritilgan sana</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for equipment in equipments %}
-                      <tr>
-                        <td><a href="{% url 'equipment_detail' equipment.pk %}">{{ equipment.name.name }}</a></td>
-                        <td>{{ equipment.amount.first }}</td>
-                        <td>{{ equipment.equipment_type }}</td>
-                        <td>{{ equipment.entered_date }}</td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                  {% if page_obj %}
+                  <div class="row">
+                    {% for eq in page_obj %}
+                    <div class="col-sm-6 col-md-4">
+                      <div class="card card-primary card-outline">
+                        <div class="card-header text-center">
+                          <h5 class="card-title mb-0">{{ eq.name.name }}</h5>
+                        </div>
+                        <div class="card-body p-0 position-relative">
+                          {% if eq.image1 %}
+                            <img class="img-fluid"
+                                 src="{{ eq.image1.url }}"
+                                 alt="Jihoz Rasm"
+                                 style="width: 100%; height: 200px; object-fit: cover;">
+                          {% else %}
+                            <img class="img-fluid"
+                                 src="{% static 'images/default_equipment.png' %}"
+                                 alt="Default equipment"
+                                 style="width: 100%; height: 200px; object-fit: cover;">
+                          {% endif %}
+                          <div class="ribbon-wrapper ribbon-lg">
+                            <div class="ribbon bg-primary">
+                              {{ eq.equipment_type }}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card-footer">
+                          <p class="mb-1"><b>Miqdor:</b> {{ eq.amount }}</p>
+                          <p class="mb-1"><b>Kiritilgan sana:</b> {{ eq.entered_date|date:"d.m.Y" }}</p>
+                          <a href="{% url 'equipment_detail' eq.pk %}"
+                             class="btn btn-info btn-block">
+                             <i class="fas fa-eye"></i> Ko‘rish
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                    
+                  </div>
+
+                  <!-- Paginatsiya -->
+                  <div class="mt-3">
+                    <nav aria-label="Equipment page navigation">
+                      <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            «
+                          </a>
+                        </li>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                          {% if page_obj.number == num %}
+                            <li class="page-item active">
+                              <a class="page-link" href="#">{{ num }}</a>
+                            </li>
+                          {% else %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            »
+                          </a>
+                        </li>
+                        {% endif %}
+                      </ul>
+                    </nav>
+                  </div>
                   {% else %}
-                  <p class="text-muted text-center">Jihozlar topilmadi.</p>
+                  <p class="text-muted">Jihozlar topilmadi.</p>
                   {% endif %}
                 </div>
 
-                <!-- Statistics Tab -->
-                <div class="tab-pane" id="statistics">
-                  <h4 class="mb-3">Statistika</h4>
-                  <ul class="list-group">
-                    <li class="list-group-item"><b>Ball:</b> {{ organization.ball }}</li>
-                    <li class="list-group-item"><b>O'quvchilar soni:</b> {{ organization.students_amount }}</li>
-                    <li class="list-group-item"><b>Inkluziv:</b> {{ organization.is_inclusive|yesno:"Ha,Yo'q" }}</li>
-                    <li class="list-group-item"><b>Jihozlar soni:</b> {{ equipments.count }}</li>
-                    <li class="list-group-item"><b>Sinflar soni:</b> {{ base_classes.count }}</li>
-                  </ul>
+                <!-- 3) Timeline -->
+                <div class="tab-pane" id="timeline">
+                  <h4 class="mb-3">Jihozlar yaratilish tarixi</h4>
+                  {% if equipment_history %}
+                  <div class="timeline timeline-inverse">
+                    {% for hist in equipment_history %}
+                    <div class="time-label">
+                      <span class="bg-warning">
+                        {{ hist.history_date|date:"d M Y H:i" }}
+                      </span>
+                    </div>
+                    <div>
+                      <i class="fas fa-cubes bg-info"></i>
+                      <div class="timeline-item">
+                        <span class="time">
+                          <i class="fas fa-clock"></i> 
+                          {{ hist.history_date|time:"H:i" }}
+                        </span>
+                        <h3 class="timeline-header">
+                          {% if hist.name %}
+                            {{ hist.name.name }}
+                          {% else %}
+                            Noma'lum jihoz
+                          {% endif %}
+                        </h3>
+                        <div class="timeline-body">
+                          <b>Miqdor:</b> {{ hist.amount }}<br>
+                          <b>Turi:</b> {{ hist.equipment_type }}<br>
+                          <b>O'zgarish turi:</b>
+                          {% if hist.history_type == '+' %}
+                            Yaratilgan
+                          {% elif hist.history_type == '~' %}
+                            Tahrirlangan
+                          {% elif hist.history_type == '-' %}
+                            O'chirilgan
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                    <div>
+                      <i class="fas fa-clock bg-gray"></i>
+                    </div>
+                  </div>
+                  {% else %}
+                  <p class="text-muted">Tarixiy ma’lumotlar topilmadi.</p>
+                  {% endif %}
                 </div>
+
+                <!-- 4) XARITA (Yandex) -->
+                <div class="tab-pane" id="map">
+                  <h4 class="mb-3">Tashkilot joylashuvi</h4>
+                  {% if organization.latitude and organization.longitude %}
+                    <div id="ymap" style="width: 100%; height: 400px;"></div>
+                  {% else %}
+                    <p class="text-muted">Kenglik va uzunlik belgilanmagan.</p>
+                  {% endif %}
+                </div>
+
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div> <!-- /col-md-8 -->
+      </div> <!-- /row -->
     </div>
   </section>
 </div>
+
+<!-- Chart.js -->
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+<script>
+  // Area Chart: Oxirgi oylar bo'yicha jihoz qo'shish
+  const areaCtx = document.getElementById('orgEquipmentChart').getContext('2d');
+  const areaChart = new Chart(areaCtx, {
+    type: 'line',
+    data: {
+      labels: {{ months_list|safe }}, // masalan: ["Apr 2023","May 2023",...]
+      datasets: [{
+        label: 'Qo‘shilgan jihozlar',
+        data: {{ monthly_equipment_data|safe }}, // [2,5,1,...]
+        backgroundColor: 'rgba(60,141,188,0.2)',
+        borderColor: 'rgba(60,141,188,1)',
+        borderWidth: 2,
+        pointRadius: 3,
+        fill: true
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          stepSize: 1
+        }
+      }
+    }
+  });
+</script>
+
+<!-- Yandex Map (faqat lat/lng bo'lsa) -->
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
+<script>
+  const lat = "{{ organization.latitude|default_if_none:'' }}";
+  const lng = "{{ organization.longitude|default_if_none:'' }}";
+  
+  if(lat && lng){
+    ymaps.ready(function(){
+      var map = new ymaps.Map("ymap", {
+        center: [parseFloat(lat), parseFloat(lng)],
+        zoom: 14
+      });
+      var placemark = new ymaps.Placemark([parseFloat(lat), parseFloat(lng)], {
+        balloonContent: '{{ organization.name }}'
+      }, {
+        preset: 'islands#icon',
+        iconColor: '#0095b6'
+      });
+      map.geoObjects.add(placemark);
+    });
+  }
+</script>
 {% endblock %}

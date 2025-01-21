@@ -94,16 +94,14 @@ class OrganizationForm(forms.ModelForm):
         model = Organizations
         fields = [
             'organization_number', 'name', 'education_type', 'power', 'is_inclusive', 
-            'rating', 'students_amount', 'ball', 'latitude', 'longitude', 'region', 'city', 'district'
+            'students_amount', 'latitude', 'longitude', 'region', 'city', 'district'
         ]
         widgets = {
             'organization_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Muassasa raqami'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tashkilot nomi'}),
             'education_type': forms.Select(attrs={'class': 'form-control'}),
             'power': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quvvat'}),
-            'rating': forms.Select(attrs={'class': 'form-control'}),
             'students_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': "Sig'imi"}),
-            'ball': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ball'}),
             'latitude': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Kenglik'}),
             'longitude': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Uzunlik'}),
         }
@@ -112,9 +110,7 @@ class OrganizationForm(forms.ModelForm):
             'name': 'Tashkilot nomi',
             'education_type': 'Tashkilot turi',
             'power': 'Quvvat',
-            'rating': 'Reyting',
             'students_amount': 'Talabalar soni',
-            'ball': 'Ball',
             'latitude': 'Kenglik (latitude)',
             'longitude': 'Uzunlik (longitude)',
         }
@@ -139,7 +135,7 @@ class OrganizationForm(forms.ModelForm):
 
 class MessageForm(forms.ModelForm):
     recipient = forms.ModelChoiceField(
-        queryset=User.objects.all(),  # "Hamma" foydalanuvchilar ko'rinsin
+        queryset=User.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
         label="Qabul qiluvchi",
         required=True
@@ -160,16 +156,8 @@ class MessageForm(forms.ModelForm):
         fields = ['recipient', 'subject', 'body']
     
     def __init__(self, *args, **kwargs):
-        """ current_user argumenti bo'lmasa ham xato chiqmasin. 
-            Yoki xohlasangiz, superuser va oddiy userlar ro'yxatini farqlay olasiz.
-        """
         current_user = kwargs.pop('current_user', None)
         super().__init__(*args, **kwargs)
-
-        # Agar ro'yxatni cheklash yoki current_user ni bekor qilmoqchi bo'lsangiz, shunday qoldirishingiz mumkin.
-        # If you want simpler logic = show "hamma", then do nothing else.
-
-        # Agar har safar username o‘rniga user_profile.fio ko‘rsatmoqchi bo‘lsangiz, xato chiqmasligi uchun shunday yozish mumkin:
         self.fields['recipient'].label_from_instance = lambda user_obj: (
             getattr(user_obj, 'user_profile', None) 
             and getattr(user_obj.user_profile, 'fio', user_obj.username) 

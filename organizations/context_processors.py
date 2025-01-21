@@ -8,10 +8,6 @@ def unread_messages(request):
 
 
 def user_organization(request):
-    """
-    Joriy foydalanuvchining user_profile bo‘lsa,
-    organization ni topib, 'organization' nomi bilan context ga qo‘shib beradi.
-    """
     if not request.user.is_authenticated:
         return {}
 

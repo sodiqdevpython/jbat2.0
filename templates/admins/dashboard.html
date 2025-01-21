@@ -1,110 +1,161 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <div class="content-wrapper">
-	<section class="content">
-		<div class="container-fluid">
-			<!-- Statistikalar -->
-			<div class="row">
-				<div class="col-lg-3 col-6">
-					<div class="small-box bg-info">
-						<div class="inner">
-							<h3>{{ organization_count }}</h3>
-							<p>Jami Muassasalar</p>
-						</div>
-						<div class="icon">
-							<i class="ion ion-university"></i>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-6">
-					<div class="small-box bg-success">
-						<div class="inner">
-							<h3>{{ user_count }}</h3>
-							<p>Jami Foydalanuvchilar</p>
-						</div>
-						<div class="icon">
-							<i class="ion ion-person"></i>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-6">
-					<div class="small-box bg-warning">
-						<div class="inner">
-							<h3>{{ equipment_count }}</h3>
-							<p>Jihozlar</p>
-						</div>
-						<div class="icon">
-							<i class="ion ion-wrench"></i>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-6">
-					<div class="small-box bg-danger">
-						<div class="inner">
-							<h3>{{ inclusive_organization_count }}</h3>
-							<p>Inkluziv Muassasalar</p>
-						</div>
-						<div class="icon">
-							<i class="ion ion-checkmark"></i>
-						</div>
-					</div>
-				</div>
-			</div>
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Statistikalar -->
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ organization_count }}</h3>
+                            <p>Jami Muassasalar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-university"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>{{ user_count }}</h3>
+                            <p>Jami Foydalanuvchilar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-person"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>{{ equipment_count }}</h3>
+                            <p>Jihozlar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-wrench"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>{{ inclusive_organization_count }}</h3>
+                            <p>Inkluziv Muassasalar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-checkmark"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			<!-- Diagramlar -->
-			<div class="row">
-				<div class="col-md-6">
-					<div class="card">
-						<div class="card-header">
-							<h3 class="card-title">Foydalanuvchilar statistikasi</h3>
-						</div>
-						<div class="card-body">
-							<canvas id="userChart" style="height: 250px"></canvas>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="card">
-						<div class="card-header">
-							<h3 class="card-title">Muassasalar Turlari</h3>
-						</div>
-						<div class="card-body">
-							<canvas id="organizationChart" style="height: 250px"></canvas>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+            <!-- Diagramlar -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Foydalanuvchilar statistikasi</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="userChart" style="height: 250px"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Muassasalar Turlari</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="organizationChart" style="height: 250px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qo'shimcha Diagram -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Jihozlar statistikasi (oxirgi 12 oy)</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="equipmentChart" style="height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
 <script>
-	// Foydalanuvchilar Statistikasi
-	const userCtx = document.getElementById('userChart').getContext('2d');
-	new Chart(userCtx, {
-	    type: 'bar',
-	    data: {
-	        labels: ['Foydalanuvchilar', 'Jihozlar', 'Muassasalar'],
-	        datasets: [{
-	            label: 'Statistika',
-	            data: [{{ user_count }}, {{ equipment_count }}, {{ organization_count }}],
-	            backgroundColor: ['#17a2b8', '#ffc107', '#28a745']
-	        }]
-	    }
-	});
+    // Equipment, Organizations va Users statistikasi
+    const userCtx = document.getElementById('userChart').getContext('2d');
+    new Chart(userCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jihozlar', 'Muassasalar', 'Foydalanuvchilar'],
+            datasets: [{
+                label: 'Statistika',
+                data: [{{ equipment_count }}, {{ organization_count }}, {{ user_count }}],
+                backgroundColor: ['#17a2b8', '#ffc107', '#28a745'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
-	// Muassasalar Turlari
-	const orgCtx = document.getElementById('organizationChart').getContext('2d');
-	new Chart(orgCtx, {
-	    type: 'pie',
-	    data: {
-	        labels: ['Inkluziv', 'Inkluziv emas'],
-	        datasets: [{
-	            label: 'Muassasalar Turlari',
-	            data: [{{ inclusive_organization_count }}, {{ non_inclusive_organization_count }}],
-	            backgroundColor: ['#dc3545', '#6c757d']
-	        }]
-	    }
-	});
+    // Muassasalar turlari
+    const orgCtx = document.getElementById('organizationChart').getContext('2d');
+    new Chart(orgCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Inkluziv', 'Inkluziv emas'],
+            datasets: [{
+                label: 'Muassasalar Turlari',
+                data: [{{ inclusive_organization_count }}, {{ non_inclusive_organization_count }}],
+                backgroundColor: ['#dc3545', '#6c757d']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Jihozlar statistikasi (oxirgi 12 oy)
+    const equipmentCtx = document.getElementById('equipmentChart').getContext('2d');
+    new Chart(equipmentCtx, {
+        type: 'line',
+        data: {
+            labels: ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'],
+            datasets: [{
+                label: 'Qo‘shilgan jihozlar',
+                data: {{ equipment_monthly_stats|safe }},
+                backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                borderColor: '#17a2b8',
+                borderWidth: 2,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
 </script>
+
 {% endblock %}

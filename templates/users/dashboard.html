@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Oddiy Foydalanuvchi Dashboard</h1>
+                    <h1>Foydalanuvchi Dashboard</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -31,41 +31,27 @@
                 </div>
             </div>
             {% else %}
-
-            <!-- Statistikalar qismi -->
+            <!-- 1) Quick stats (Row 1) -->
             <div class="row">
-                <!-- Tashkilot nomi -->
-                <div class="col-lg-3 col-6">
+                <!-- Muassasa nomi -->
+                <div class="col-lg-4 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h5>{{ org_name }}</h5>
-                            <p>Umumiy ma'lumot</p>
+                            <h4>{{ org_name }}</h4>
+                            <p>Muassasa nomi</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-building"></i>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Rating -->
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h5>{{ org_rating }}</h5>
-                            <p>Reyting</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Sig'imi -->
-                <div class="col-lg-3 col-6">
+                <!-- Talabalar soni (sig'imi) -->
+                <div class="col-lg-4 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
-                            <h5>{{ org_student_count }}</h5>
-                            <p>Sig'imi</p>
+                            <h4>{{ org_student_count }}</h4>
+                            <p>O'quvchilar soni (Sig'imi)</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-users"></i>
@@ -73,39 +59,27 @@
                     </div>
                 </div>
 
-                <!-- Ball -->
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h5>{{ org_ball }}</h5>
-                            <p>Ball</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Inclusive -->
-                <div class="col-lg-3 col-6">
+                <!-- Inkluziv -->
+                <div class="col-lg-4 col-6">
                     <div class="small-box bg-primary">
                         <div class="inner">
-                            <h5>{{ org_inclusive }}</h5>
-                            <p>Inclusive</p>
+                            <h4>{{ org_inclusive }}</h4>
+                            <p>Inkluzivligi</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-check"></i>
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- 2) Quick stats (Row 2) -->
+            <div class="row">
                 <!-- Quvvat (Power) -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-secondary">
                         <div class="inner">
-                            <h5>{{ org_power }}</h5>
+                            <h4>{{ org_power }}</h4>
                             <p>Quvvat</p>
                         </div>
                         <div class="icon">
@@ -114,11 +88,11 @@
                     </div>
                 </div>
 
-                <!-- Region (Viloyat) -->
+                <!-- Viloyat -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-teal">
                         <div class="inner">
-                            <h5>{{ org_region }}</h5>
+                            <h4>{{ org_region }}</h4>
                             <p>Viloyat</p>
                         </div>
                         <div class="icon">
@@ -127,11 +101,11 @@
                     </div>
                 </div>
 
-                <!-- Shahar / Tuman -->
+                <!-- Shahar/Tuman -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-indigo">
                         <div class="inner">
-                            <h5>{{ org_city_district }}</h5>
+                            <h4>{{ org_city_district }}</h4>
                             <p>Shahar/Tuman</p>
                         </div>
                         <div class="icon">
@@ -139,65 +113,56 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Qo'shimcha statistika -->
-            <div class="row">
+                <!-- Umumiy jihozlar soni -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h5>{{ total_equipments }}</h5>
-                            <p>Umumiy Jihozlar Soni</p>
+                            <h4>{{ total_equipments }}</h4>
+                            <p>Jihozlar soni</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-tools"></i>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-light">
-                        <div class="inner">
-                            <h5>{{ most_equipped_room }}</h5>
-                            <p>Eng Ko'p Jihozlangan Xona</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-chalkboard"></i>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Qo'shimcha ma'lumotlar qismi -->
+            <!-- 3) Charts row -->
             <div class="row">
-                <!-- Chart yoki Grafiglar -->
-                <div class="col-lg-6">
-                    <div class="card">
+                <!-- Left Column: So'nggi 3 oy statistika (Bar chart) -->
+                <div class="col-md-6">
+                    <div class="card card-primary card-outline">
                         <div class="card-header">
-                            <h5 class="card-title">Jihozlar Statistikasi (So'nggi 3 oy)</h5>
+                            <h5 class="card-title">Oxirgi 3 oyda qo'shilgan jihozlar</h5>
                         </div>
                         <div class="card-body">
-                            <canvas id="equipmentChart" style="height:250px; min-height:250px"></canvas>
+                            <canvas id="equipmentChart" style="height:250px;"></canvas>
                         </div>
                     </div>
                 </div>
 
+                <!-- Right Column: Jihoz turlari taqsimoti (Pie Chart) - MISOL -->
+
             </div>
+
+            <!-- Agar yana qo'shimcha statistika yoki ma'lumot qo'shmoqchi bo'lsangiz, shu yerga joylashtiring -->
+
             {% endif %}
         </div>
     </section>
 </div>
 
-<!-- Chart.js kutubxona -->
+<!-- Chart.js kutubxonasi -->
 <script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     {% if not no_organization %}
+    // 1) Oxirgi 3 oy bar chart
     const monthNames = [
         'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 
         'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
     ];
-
     const today = new Date();
     const currentMonth = today.getMonth();
 
@@ -207,34 +172,30 @@ document.addEventListener('DOMContentLoaded', function() {
         last3Months.push(monthNames[monthIndex]);
     }
 
+    // equipment_data = [X, Y, Z]
     const equipmentData = {{ equipment_data|safe }};
 
-    const ctx = document.getElementById('equipmentChart').getContext('2d');
-    new Chart(ctx, {
+    const eqChartCtx = document.getElementById('equipmentChart').getContext('2d');
+    new Chart(eqChartCtx, {
         type: 'bar',
         data: {
             labels: last3Months,
             datasets: [{
                 label: 'Jihozlar soni',
                 data: equipmentData,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: ['#2196f3', '#ffc107', '#4caf50'],
+                borderColor: ['#1e88e5', '#ffca28', '#43a047'],
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            },
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Oxirgi 3 oy'
+                        text: 'Oylar'
                     }
                 },
                 y: {
@@ -243,6 +204,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: true,
                         text: 'Jihozlar soni'
                     }
+                }
+            }
+        }
+    });
+
+    // 2) Jihoz turlari taqsimoti (Pie Chart) - misol
+    // Ehtimol, back-end da "equipment_type_count" kabilarni (Asbob uskunalar, Jihozlar, ...) sanab context ga uzatish mumkin.
+    // Yoki hozircha static misol
+
+    const eqTypeCtx = document.getElementById('equipmentTypeChart').getContext('2d');
+    new Chart(eqTypeCtx, {
+        type: 'pie',
+        data: {
+            labels: eqTypeLabels,
+            datasets: [{
+                data: eqTypeData,
+                backgroundColor: ['#f44336', '#9c27b0', '#ff9800']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
                 }
             }
         }

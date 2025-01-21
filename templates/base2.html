@@ -143,7 +143,7 @@
 
 						<li class="nav-item">
                             {% if not request.user.is_superuser and organization %}
-                                <a href="{% url 'organization_detail' organization.id %}" class="nav-link">
+                                <a href="{% url 'user_org_detail' organization.id %}" class="nav-link">
                                     <i class="nav-icon fas fa-building"></i>
                                     <p>Muassasa haqida</p>
                                 </a>
@@ -155,10 +155,11 @@
                             {% endif %}
                         </li>
                         
+                        
                         <li class="nav-item">
-                            <a href="{% url 'equipment_create' %}" class="nav-link">
+                            <a href="{% url 'user_equipment_list' %}" class="nav-link">
                                 <i class="nav-icon fas fa-plus-square"></i>
-                                <p>Jihoz qo‘shish</p>
+                                <p>Jihozlar</p>
                             </a>
                         </li>
                         

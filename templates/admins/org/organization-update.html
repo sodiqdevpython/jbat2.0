@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+
+    <!-- Agar Toastr xabar chiqarmoqchi bo'lsangiz: -->
+    <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}">
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Muassasa ma'lumotlarini tahrirlash</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Asosiy</a></li>
+                        <li class="breadcrumb-item active">Tahrirlash</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toastr xabarlar -->
+    {% if messages %}
+    <script>
+    $(document).ready(function(){
+        {% for message in messages %}
+            toastr["{{ message.tags }}"]("{{ message }}");
+        {% endfor %}
+    });
+    </script>
+    {% endif %}
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Muassasa: {{ organization.name }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- 1-qator: 4 ustun -->
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                {{ form.organization_number.label_tag }}
+                                {{ form.organization_number }}
+                                {% for error in form.organization_number.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {% for error in form.name.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.education_type.label_tag }}
+                                {{ form.education_type }}
+                                {% for error in form.education_type.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.power.label_tag }}
+                                {{ form.power }}
+                                {% for error in form.power.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- 2-qator: 4 ustun -->
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                {{ form.is_inclusive.label_tag }}
+                                {{ form.is_inclusive }}
+                                {% for error in form.is_inclusive.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.students_amount.label_tag }}
+                                {{ form.students_amount }}
+                                {% for error in form.students_amount.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.latitude.label_tag }}
+                                {{ form.latitude }}
+                                {% for error in form.latitude.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.longitude.label_tag }}
+                                {{ form.longitude }}
+                                {% for error in form.longitude.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- 3-qator: 4 ustun -->
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                {{ form.region.label_tag }}
+                                {{ form.region }}
+                                {% for error in form.region.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.location_type.label_tag }}
+                                {{ form.location_type }}
+                                {% for error in form.location_type.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3" id="city-field" style="display:none;">
+                                {{ form.city.label_tag }}
+                                {{ form.city }}
+                                {% for error in form.city.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-3 mb-3" id="district-field" style="display:none;">
+                                {{ form.district.label_tag }}
+                                {{ form.district }}
+                                {% for error in form.district.errors %}
+                                  <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-success mr-2">
+                                    <i class="fas fa-save"></i> Saqlash
+                                </button>
+                                <a href="{% url 'org_detail' organization.id %}" class="btn btn-secondary">
+                                    Bekor qilish
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationTypeSelect = document.getElementById('id_location_type');
+        const cityField = document.getElementById('city-field');
+        const districtField = document.getElementById('district-field');
+
+        function toggleLocationFields() {
+            const selectedType = locationTypeSelect.value;
+            if (selectedType === 'city') {
+                cityField.style.display = 'block';
+                districtField.style.display = 'none';
+            } else if (selectedType === 'district') {
+                cityField.style.display = 'none';
+                districtField.style.display = 'block';
+            } else {
+                cityField.style.display = 'none';
+                districtField.style.display = 'none';
+            }
+        }
+        toggleLocationFields();  // Sahifa yuklanganda ham mavjud data asosida ko‘rsatish
+        locationTypeSelect.addEventListener('change', toggleLocationFields);
+    });
+</script>
+{% endblock %}

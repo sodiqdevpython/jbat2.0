@@ -1,0 +1,144 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Jihoz qo'shish</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'user_dashboard' %}">Asosiy</a></li>
+                        <li class="breadcrumb-item active">Jihoz qo'shish</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">Yangi Jihoz</h3>
+          </div>
+          <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <!-- form.as_p o‘rniga row-lar bo‘ylab fieldlarni joylashtiramiz -->
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {{ form.name.label_tag }}
+                  {{ form.name }}
+                  {% for error in form.name.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.measure_type.label_tag }}
+                  {{ form.measure_type }}
+                  {% for error in form.measure_type.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                  {% endfor %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.amount.label_tag }}
+                  {{ form.amount }}
+                  {% for error in form.amount.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- 2-qator -->
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {{ form.avilable_type.label_tag }}
+                  {{ form.avilable_type }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.accepted_date.label_tag }}
+                  {{ form.accepted_date }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.invert_number.label_tag }}
+                  {{ form.invert_number }}
+                </div>
+              </div>
+
+              <!-- 3-qator -->
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {{ form.entered_date.label_tag }}
+                  {{ form.entered_date }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.when_first_time_used.label_tag }}
+                  {{ form.when_first_time_used }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.when_made.label_tag }}
+                  {{ form.when_made }}
+                </div>
+              </div>
+
+              <!-- 4-qator (rasmlar) -->
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {{ form.image1.label_tag }}
+                  {{ form.image1 }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.image2.label_tag }}
+                  {{ form.image2 }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.image3.label_tag }}
+                  {{ form.image3 }}
+                </div>
+              </div>
+
+              <!-- 5-qator -->
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {{ form.penny_by_year.label_tag }}
+                  {{ form.penny_by_year }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.equipment_type.label_tag }}
+                  {{ form.equipment_type }}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {{ form.command_file.label_tag }}
+                  {{ form.command_file }}
+                </div>
+              </div>
+
+              <!-- 6-qator: xarakteri (TextArea) -->
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  {{ form.xarakteri.label_tag }}
+                  {{ form.xarakteri }}
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Saqlash
+              </button>
+              <a href="{% url 'user_dashboard' %}" class="btn btn-secondary float-right">
+                Bekor qilish
+              </a>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </section>
+</div>
+{% endblock %}

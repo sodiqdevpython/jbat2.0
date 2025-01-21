@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="content-wrapper">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>{{ organization.name }}: Barcha Jihozlar</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item">
+              <a href="{% url 'org_detail' organization.id %}">Orqaga</a>
+            </li>
+            <li class="breadcrumb-item active">Jihozlar</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <button class="btn btn-danger mr-2" id="pdfBtn"><i class="fas fa-file-pdf"></i> PDF</button>
+          <button class="btn btn-success mr-2" id="excelBtn"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="btn btn-primary" id="wordBtn"><i class="fas fa-file-word"></i> Word</button>
+        </div>
+        <div class="card-body">
+          <table id="equipTable" class="table table-bordered table-hover table-sm">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Invert raqami</th>
+                <th>Jihoz nomi</th>
+                <th>Miqdor</th>
+                <th>Ishlab chiqarilgan yil</th>
+                <th>Qabul qilingan sana</th>
+                <th>Yillik eskirish foizi</th>
+                <th>Kim kiritgan</th>
+                <th>Holati</th>
+                <th>Kiritilgan sana</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for eq in equipments %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'equipment_detail' eq.pk %}">{{ eq.invert_number }}</a></td>
+                <td>
+                  {% if eq.name %}
+                    {{ eq.name.name }}
+                  {% endif %}
+                </td>
+                <td>{{ eq.amount }}</td>
+                <td>{{ eq.when_made }}</td>
+                <td>{{ eq.accepted_date|date:"d.m.Y" }}</td>
+                <td>{{ eq.penny_by_year }}%</td>
+                <td>{% if eq.author %} {{ eq.author.fio }} {% endif %}</td>
+                <td>{{ eq.avilable_type }}</td>
+                <td>{{ eq.entered_date|date:"d.m.Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="10" class="text-muted text-center">Jihozlar mavjud emas.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <p class="mt-2">Jami <b>{{ equipments.count }}</b> ta jihoz</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- DataTables + Export kutubxonalar -->
+<link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- pdfMake -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.4/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.4/vfs_fonts.js"></script>
+
+<!-- Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<!-- Word (HTML => .doc) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.27.0/docxtemplater.min.js"></script>
+
+<script>
+  // 1) DataTables init (client-side pagination)
+  $(document).ready(function(){
+    $('#equipTable').DataTable({
+      "pageLength": 20,  // har safar 20 tadan ko'rsatish
+      "lengthChange": false,
+      "searching": true,
+      "ordering": true,
+    });
+  });
+
+  // 2) Export to PDF
+  $("#pdfBtn").click(function(){
+    // HTML tabledan ma’lumotlarni o‘qib, pdfMake ga beramiz
+    const table = document.getElementById("equipTable");
+    let bodyData = [];
+    // header
+    bodyData.push([
+      "#","Invert raqam","Nomi","Miqdor","Yil","Qabul","Eskirish","Kim","Holati","Kiritilgan"
+    ]);
+    let rows = table.querySelectorAll("tbody tr");
+    rows.forEach((row, idx)=>{
+      let cells = row.querySelectorAll("td");
+      if(cells.length > 0){
+        let rowData = [];
+        cells.forEach(cell=>{
+          rowData.push(cell.innerText.trim());
+        });
+        bodyData.push(rowData);
+      }
+    });
+    let docDefinition = {
+      content: [
+        { text: "{{ organization.name }}: Barcha Jihozlar", style: 'header', margin: [0,0,0,10] },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+            body: bodyData
+          },
+          fontSize: 8
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 14,
+          bold: true
+        }
+      }
+    };
+    pdfMake.createPdf(docDefinition).download("{{ organization.name }}_jihozlar.pdf");
+  });
+
+  // 3) Export to Excel
+  $("#excelBtn").click(function(){
+    let table = document.getElementById("equipTable");
+    let wb = XLSX.utils.table_to_book(table, { sheet: "Jihozlar" });
+    XLSX.writeFile(wb, "{{ organization.name }}_jihozlar.xlsx");
+  });
+
+  // 4) Export to Word
+  $("#wordBtn").click(function(){
+    let table = document.getElementById("equipTable");
+    let rows = Array.from(table.rows);
+    let htmlTable = rows.map(row =>
+      `<tr>${
+        Array.from(row.cells).map(cell=>
+          `<td style="border:1px solid #000; padding:8px;">${cell.innerText}</td>`
+        ).join("")
+      }</tr>`
+    ).join("");
+
+    let content = `
+    <html>
+    <head><meta charset="utf-8"></head>
+    <body>
+      <h3>${"{{ organization.name }}: Barcha Jihozlar"}</h3>
+      <table style="border-collapse:collapse; width:100%;">
+        ${htmlTable}
+      </table>
+    </body>
+    </html>
+    `;
+    let blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+    saveAs(blob, "{{ organization.name }}_jihozlar.doc");
+  });
+</script>
+{% endblock %}
