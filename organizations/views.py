@@ -45,7 +45,7 @@ class LoginView(View):
 class LogoutView(View, LoginRequiredMixin):
     def get(self, request):
         logout(request)
-        return redirect('public')
+        return redirect('login')
 
 
 class PublicView(View):
